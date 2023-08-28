@@ -7,7 +7,6 @@ import {
   import { Request } from 'express';
   import { FirebaseApp } from 'src/firebase/firebase-app';
   import * as firebase from 'firebase-admin';
-import { UserSchema } from 'src/user/schemas/user.schema';
 import { UserModel } from 'src/models/user.models';
 
   @Injectable()
