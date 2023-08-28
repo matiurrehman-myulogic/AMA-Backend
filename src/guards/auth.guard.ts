@@ -12,10 +12,10 @@ import { UserModel } from 'src/models/user.models';
   @Injectable()
   export class AuthGuard implements CanActivate {
     private auth: firebase.auth.Auth;
-  
-    constructor(
     
- 
+    constructor(
+      private readonly authService:any,
+
       private firebaseApp: FirebaseApp,
     ) {
       this.auth = firebaseApp.getAuth();

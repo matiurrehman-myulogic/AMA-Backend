@@ -4,9 +4,9 @@ import { AppService } from './app.service';
 import { BookModule } from './book/book.module';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-import { UserModule } from './user/user.module';
+
 import { FirebaseApp } from 'src/firebase/firebase-app';
-import { AuthGuard } from './guards/auth.guard';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -16,12 +16,14 @@ import { AuthGuard } from './guards/auth.guard';
     }),
     MongooseModule.forRoot(process.env.MongoDbUri),
     BookModule,
-  
+  UserModule
     ],
 
   controllers: [AppController],
   providers: [AppService,
     FirebaseApp,  
+  
+
   ],
 })
 export class AppModule {}

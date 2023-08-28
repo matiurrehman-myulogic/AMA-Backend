@@ -8,7 +8,7 @@ import { Prop,Schema,SchemaFactory } from "@nestjs/mongoose";
 
 export class User {
     @Prop()
-    Phone_Number:number
+    Phone_Number:string
     @Prop()
     FullName:string
     @Prop()

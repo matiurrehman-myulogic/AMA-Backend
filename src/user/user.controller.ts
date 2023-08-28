@@ -7,15 +7,15 @@ import { AuthGuard } from 'src/guards/auth.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
 @UseGuards(AuthGuard)
 @ApiBearerAuth('JWT')
-@Controller('user')
+@Controller('auth')
 export class UserController {
   constructor(private userService: UserService) {}
 
-  @Get()
+  @Get('users')
   async getAllUsers(): Promise<User[]> {
     return this.userService.findAll();
   }
-  @Post()
+  @Post('register')
   async createUser(
     @Body()
     user: createUserDto,

@@ -7,7 +7,7 @@ export class createUserDto {
     required: true,
     example: '123456789',
   })
-  Phone_Number: number;
+  Phone_Number: string;
 
   @IsNotEmpty()
   @ApiProperty({
