@@ -5,6 +5,8 @@ import { BookModule } from './book/book.module';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserModule } from './user/user.module';
+import { FirebaseApp } from 'src/firebase/firebase-app';
+import { UserService } from './user/user.service';
 
 @Module({
   imports: [
@@ -17,6 +19,11 @@ import { UserModule } from './user/user.module';
     UserModule],
 
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService,
+    FirebaseApp,
+    UserService,
+    
+  
+  ],
 })
 export class AppModule {}

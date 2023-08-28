@@ -1,6 +1,6 @@
 import { Body, Controller,Get, Post } from '@nestjs/common';
 import { BookService } from './book.service';
-import { Book } from './schemas/book.schema';
+import { Book } from '../schemas/book.schema';
 
 
 @Controller('books')
