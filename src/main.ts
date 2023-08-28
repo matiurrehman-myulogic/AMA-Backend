@@ -9,7 +9,15 @@ async function bootstrap() {
       'A set of all the API`s required for  AskMeAnything application',
     )
     .setVersion('1.0')
-
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        in: 'header',
+      },
+      'JWT',
+    )
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
