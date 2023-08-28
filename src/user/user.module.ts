@@ -3,13 +3,14 @@ import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserSchema } from './schemas/user.schema';
-import { AuthGuard } from 'src/guards/auth.guard';
+import { FirebaseApp } from 'src/firebase/firebase-app';
+
 
 
 @Module({
   imports:[MongooseModule.forFeature([{name:'User',schema:UserSchema}])],
 
   controllers: [UserController],
-  providers: [UserService]
+  providers: [UserService,FirebaseApp]
 })
 export class UserModule {}
