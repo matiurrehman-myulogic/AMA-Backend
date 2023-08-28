@@ -7,6 +7,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 import { FirebaseApp } from 'src/firebase/firebase-app';
 import { UserModule } from './user/user.module';
+// import { UserModule } from './user/user.module';
 
 @Module({
   imports: [

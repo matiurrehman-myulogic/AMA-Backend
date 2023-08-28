@@ -13,17 +13,11 @@ import { UserModel } from 'src/models/user.models';
   export class AuthGuard implements CanActivate {
     private auth: firebase.auth.Auth;
     
-    constructor(
-      private readonly authService:any,
 
-      private firebaseApp: FirebaseApp,
-    ) {
-      this.auth = firebaseApp.getAuth();
-    }
   
     async canActivate(context: ExecutionContext): Promise<boolean> {
       const request = context.switchToHttp().getRequest();
-  
+  console.log(333333)
       const token = this.extractTokenFromHeader(request);
       if (token != null && token != '') {
         try {  
