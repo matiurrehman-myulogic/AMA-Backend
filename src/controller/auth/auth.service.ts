@@ -8,15 +8,15 @@ import { Auth } from 'src/schema/auth.schema';
 export class AuthService {
   constructor(
     @InjectModel(Auth.name)
-    private UserModel: moongose.Model<Auth>,
+    private AuthModel: moongose.Model<Auth>,
   ) {}
   async findAll(): Promise<Auth[]> {
-    const user = await this.UserModel.find();
+    const user = await this.AuthModel.find();
     return user;
   }
 
   async create(user: Auth): Promise<Auth> {
-    const res = await this.UserModel.create(user);
+    const res = await this.AuthModel.create(user);
     return res;
   }
 }

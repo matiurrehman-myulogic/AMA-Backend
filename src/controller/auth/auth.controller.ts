@@ -1,7 +1,5 @@
 import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 
-@Controller('auth')
-export class AuthController {}
 
 
 
@@ -10,12 +8,13 @@ import { AuthGuard } from 'src/AuthGuard/authGuard';
 import { AuthService } from './auth.service';
 import { Auth } from 'src/schema/auth.schema';
 import { createUserDto } from 'src/DTO/createUser.dto';
-@UseGuards(AuthGuard)
-@ApiBearerAuth('JWT')
-@Controller('auth')
-export class UserController {
-  constructor(private userService: AuthService) {}
 
+@Controller('auth')
+
+export class AuthController {
+  constructor(private userService: AuthService) {}
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @Get('users')
   async getAllUsers(): Promise<Auth[]> {
     return this.userService.findAll();

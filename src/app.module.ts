@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-import { AuthController } from './controller/auth/auth.controller';
-import { AuthService } from './controller/auth/auth.service';
+
 import { AuthModule } from './controller/auth/auth.module';
 
 @Module({
@@ -14,10 +13,19 @@ import { AuthModule } from './controller/auth/auth.module';
       isGlobal: true,
     }),
     MongooseModule.forRoot(process.env.MongoDbUri),
+    MongooseModule.forRootAsync({
+      imports:[ConfigModule],
+//   useFactory:(configService:ConfigModule)=>({
+// const username=configService.get("DATABASE_USER");
+// const password=configService.get('')
+
+//   }),
+  inject:[ConfigService]
+    }),
     AuthModule,
   ],
 
-  controllers: [AppController, AuthController],
-  providers: [AppService, AuthService],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}
