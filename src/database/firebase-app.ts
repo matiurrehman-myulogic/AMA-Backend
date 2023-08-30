@@ -3,6 +3,7 @@ import * as firebase from 'firebase-admin';
 import firebaseConfig from './firebase-config';
 
 @Injectable()
+
 export class FirebaseApp {
   private firebaseApp: firebase.app.App;
 
