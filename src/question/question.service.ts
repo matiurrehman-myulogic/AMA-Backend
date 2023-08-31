@@ -20,8 +20,9 @@ export class QuestionService {
     
   }
 
-  findAll() {
-    return `This action returns all question`;
+  async findAll() {
+    const user = await this.QuestionModel.find();
+    return user;
   }
 
   findOne(id: number) {
