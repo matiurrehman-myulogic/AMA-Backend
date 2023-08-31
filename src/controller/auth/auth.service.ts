@@ -15,7 +15,7 @@ export class AuthService {
     return user;
   }
 
-  async userExists(user: Auth): Promise<string> {
+  async userExists(user: any): Promise<string> {
     const userPresent = await this.AuthModel.findOne({
       Phone_Number: user.Phone_Number,
     });

@@ -3,12 +3,13 @@ import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 
 
 
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/AuthGuard/authGuard';
 import { AuthService } from './auth.service';
 import { Auth } from 'src/schema/auth.schema';
 import { createUserDto } from 'src/DTO/createUser.dto';
-import { userExistsDto } from 'src/DTO/userExists.dto';
+import { userExistsDto } from './../../DTO/userExists.dto';
+@ApiTags('Auth')
 
 @Controller('auth')
 
@@ -24,7 +25,7 @@ export class AuthController {
   async chechUser(
     @Body()
     user: userExistsDto,
-  ): Promise<any> {
+  ): Promise<string> {
     console.log('uData',user)
     return this.userService.userExists(user);
   }
