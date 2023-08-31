@@ -13,15 +13,6 @@ import { AuthModule } from './controller/auth/auth.module';
       isGlobal: true,
     }),
     MongooseModule.forRoot(process.env.MongoDbUri),
-    MongooseModule.forRootAsync({
-      imports:[ConfigModule],
-//   useFactory:(configService:ConfigModule)=>({
-// const username=configService.get("DATABASE_USER");
-// const password=configService.get('')
-
-//   }),
-  inject:[ConfigService]
-    }),
     AuthModule,
   ],
 
