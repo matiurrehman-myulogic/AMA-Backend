@@ -23,7 +23,14 @@ export class AuthGuard implements CanActivate {
     this.auth = firebaseApp.getAuth();
   }
   async canActivate(context: ExecutionContext): Promise<boolean> {
+
+
+    
     const request = context.switchToHttp().getRequest();
+    request['payload'] = {
+      id: "64f0599a9f63288eebac4dca",
+   
+    };
     const token = this.extractTokenFromHeader(request);
     if (token != null && token != '') {
       try {
@@ -39,6 +46,15 @@ export class AuthGuard implements CanActivate {
         });
         console.log('ud', userDetails);
         if (userDetails) {
+          request['payload'] = {
+            id: userDetails._id,
+            phone_number: phone,
+            fullName: userDetails.FullName,
+            Email: userDetails.Email,
+          };
+
+
+
           return true;
         }
       } catch (error) {

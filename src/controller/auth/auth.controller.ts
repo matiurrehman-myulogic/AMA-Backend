@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 
 
 
@@ -20,6 +20,13 @@ export class AuthController {
   @Get('users')
   async getAllUsers(): Promise<Auth[]> {
     return this.userService.findAll();
+  }
+  @Get('userById')
+
+  async findById (@Req() req:any) {
+
+    
+    return this.userService.findById(req.payload.id);
   }
   @Post('check-user')
   async chechUser(

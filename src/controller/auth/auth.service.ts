@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 
 import * as moongose from 'mongoose';
+import { userExistsDto } from 'src/DTO/userExists.dto';
 import { Auth } from 'src/schema/auth.schema';
 
 @Injectable()
@@ -24,6 +25,14 @@ export class AuthService {
     } else {
       return 'User not exists';
     }
+  }
+
+  async findById(id:any)  {
+    const userDetail = await this.AuthModel.findOne({
+      id:id
+    })
+    
+    return userDetail;
   }
 
   async create(user: Auth): Promise<Auth> {
