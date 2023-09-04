@@ -3,13 +3,13 @@ import { InjectModel } from '@nestjs/mongoose';
 
 import * as moongose from 'mongoose';
 import { userExistsDto } from 'src/DTO/userExists.dto';
-import { Auth } from 'src/schema/auth.schema';
+import { Auth, AuthDocument } from 'src/schema/auth.schema';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectModel(Auth.name)
-    private AuthModel: moongose.Model<Auth>,
+    private AuthModel: moongose.Model<AuthDocument>,
   ) {}
   async findAll(): Promise<Auth[]> {
     const user = await this.AuthModel.find();

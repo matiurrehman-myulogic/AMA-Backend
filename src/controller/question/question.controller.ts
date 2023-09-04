@@ -1,8 +1,9 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Req } from '@nestjs/common';
 import { QuestionService } from './question.service';
-import { CreateQuestionDto } from '../DTO/create-question.dto';
+
 import { UpdateQuestionDto } from './dto/update-question.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { CreateQuestionDto } from 'src/DTO/create-question.dto';
 @ApiTags('Question')
 @Controller('questions')
 export class QuestionController {
@@ -13,7 +14,7 @@ export class QuestionController {
   create(@Body() createQuestionDto: CreateQuestionDto,  @Req() req: any) {
     return this.questionService.create({
       data:createQuestionDto,
-      user_id:req.id
+      userId:req.id
     });
   }
 

@@ -6,9 +6,11 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { DatabaseModule } from './infra/mongoose/daatabse.module';
 
 import { AuthModule } from './controller/auth/auth.module';
-import { QuestionModule } from './question/question.module';
+
 import { MongooseConfigService } from './infra/mongoose/mongoose-config.service';
 import { Auth } from './schema/auth.schema';
+import { QuestionModule } from './controller/question/question.module';
+import { MongooseModelsModule } from './schema/mongoose-models.module';
 
 @Module({
   imports: [
@@ -16,7 +18,8 @@ import { Auth } from './schema/auth.schema';
     DatabaseModule,
     AuthModule,
     QuestionModule,
-    Auth
+    Auth,
+    MongooseModelsModule
   ],
 
   controllers: [AppController],

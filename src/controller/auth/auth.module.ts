@@ -7,7 +7,7 @@ import { AuthService } from "./auth.service";
 
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: 'Auth', schema: AuthSchema }])],
+  imports: [],
 
   controllers: [AuthController],
   providers: [AuthService, FirebaseApp],

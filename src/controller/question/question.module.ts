@@ -8,7 +8,7 @@ import { AuthController } from 'src/controller/auth/auth.controller';
 import { AuthSchema } from 'src/schema/auth.schema';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: 'Question', schema:QuestionSchema }])],
+  imports: [],
 
   controllers: [QuestionController],
   providers: [QuestionService],
