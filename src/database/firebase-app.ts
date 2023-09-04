@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Global, Injectable } from '@nestjs/common';
 import * as firebase from 'firebase-admin';
 import firebaseConfig from './firebase-config';
 

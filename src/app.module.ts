@@ -11,6 +11,8 @@ import { MongooseConfigService } from './infra/mongoose/mongoose-config.service'
 import { Auth } from './schema/auth.schema';
 import { QuestionModule } from './controller/question/question.module';
 import { MongooseModelsModule } from './schema/mongoose-models.module';
+import { FirebaseApp } from './database/firebase-app';
+import { FirebaseModule } from './database/firebase.module';
 
 @Module({
   imports: [
@@ -19,7 +21,8 @@ import { MongooseModelsModule } from './schema/mongoose-models.module';
     AuthModule,
     QuestionModule,
     Auth,
-    MongooseModelsModule
+    MongooseModelsModule,
+    FirebaseModule
   ],
 
   controllers: [AppController],

@@ -2,14 +2,15 @@ import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { AuthSchema } from "src/schema/auth.schema";
 import { AuthController } from "./auth.controller";
-import { FirebaseApp } from "src/database/firebase-app";
 import { AuthService } from "./auth.service";
+import { FirebaseApp } from "src/database/firebase-app";
+import { FirebaseModule } from "src/database/firebase.module";
 
 
 @Module({
-  imports: [],
+  imports: [FirebaseModule],
 
   controllers: [AuthController],
-  providers: [AuthService, FirebaseApp],
+  providers: [AuthService],
 })
 export class AuthModule {}

@@ -6,9 +6,11 @@ import { QuestionSchema } from 'src/schema/question.schema';
 import { AuthService } from 'src/controller/auth/auth.service';
 import { AuthController } from 'src/controller/auth/auth.controller';
 import { AuthSchema } from 'src/schema/auth.schema';
+import { FirebaseApp } from 'src/database/firebase-app';
+import { FirebaseModule } from 'src/database/firebase.module';
 
 @Module({
-  imports: [],
+  imports: [FirebaseModule],
 
   controllers: [QuestionController],
   providers: [QuestionService],
