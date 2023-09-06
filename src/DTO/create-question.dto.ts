@@ -29,5 +29,6 @@ export class CreateQuestionDto {
     required: true,
     example: 'http://uri.com',
   })
+  
   pic: string;
 }

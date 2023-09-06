@@ -16,6 +16,8 @@ export class Question {
   pic:string;
   @Prop()
   location:string;
+  @Prop({default:0})
+  likes:number;
 }
 export type QuentionDocument= Question & Document
 export const    QuestionSchema = SchemaFactory.createForClass(Question);

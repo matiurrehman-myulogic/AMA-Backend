@@ -5,8 +5,8 @@ import { UpdateQuestionDto } from './dto/update-question.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CreateQuestionDto } from 'src/DTO/create-question.dto';
 import { AuthGuard } from 'src/AuthGuard/authGuard';
-// @UseGuards(AuthGuard)
-// @ApiBearerAuth('JWT')
+@UseGuards(AuthGuard)
+@ApiBearerAuth('JWT')
 @ApiTags('Question')
 @Controller('questions')
 export class QuestionController {
@@ -18,7 +18,8 @@ export class QuestionController {
   create(@Body() createQuestionDto: CreateQuestionDto,  @Req() req: any) {
     return this.questionService.create({
       data:createQuestionDto,
-      userId:req.id
+      userId:req.payload.id,
+     
     });
   }
 
@@ -32,11 +33,14 @@ export class QuestionController {
     return this.questionService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateQuestionDto: UpdateQuestionDto) {
-    return this.questionService.update(+id, updateQuestionDto);
+  @Patch('/likesIncrement')
+  updateLikesIncrement(@Param('id') id: string) {
+    return this.questionService.updateLikesIncrement(id);
   }
-
+  @Patch('/likesDecrement')
+  updateLikesDecrement(@Param('id') id: string) {
+    return this.questionService.updateLikesDecrement(id);
+  }
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.questionService.remove(+id);

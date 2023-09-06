@@ -27,10 +27,10 @@ export class AuthGuard implements CanActivate {
 
     
     const request = context.switchToHttp().getRequest();
-    request['payload'] = {
-      id: "64f0599a9f63288eebac4dca",
+    // request['payload'] = {
+    //   id: "64f0599a9f63288eebac4dca",
    
-    };
+    // };
     const token = this.extractTokenFromHeader(request);
     if (token != null && token != '') {
       try {
@@ -49,8 +49,9 @@ export class AuthGuard implements CanActivate {
           request['payload'] = {
             id: userDetails._id,
             phone_number: phone,
-            fullName: userDetails.FullName,
-            Email: userDetails.Email,
+            ProfilePic: userDetails.FullName,
+            FullName: userDetails.FullName,
+           
           };
 
 

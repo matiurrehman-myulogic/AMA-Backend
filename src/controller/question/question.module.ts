@@ -8,6 +8,7 @@ import { AuthController } from 'src/controller/auth/auth.controller';
 import { AuthSchema } from 'src/schema/auth.schema';
 import { FirebaseApp } from 'src/database/firebase-app';
 import { FirebaseModule } from 'src/database/firebase.module';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [FirebaseModule],
