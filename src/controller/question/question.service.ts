@@ -6,10 +6,13 @@ import { Question ,QuentionDocument} from 'src/schema/question.schema';
 
 import * as mongoose from 'mongoose';
 import { Auth, AuthDocument } from 'src/schema/auth.schema';
+import { ConfigService } from '@nestjs/config';
+import axios from 'axios';
 @Injectable()
 export class QuestionService {
 
   constructor(
+    private config:ConfigService,
     @InjectModel(Question.name)
     private QuestionModel: mongoose.Model<QuentionDocument>,
     @InjectModel(Auth.name)
@@ -19,7 +22,17 @@ export class QuestionService {
   ) {}
 
   async create({userId,data}): Promise<Question> {
+    const apiKey = this.config.get<string>('GOOGLE_MAPS_API_KEY');
+    const apiUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${data.Location.Latitude},${data.Location.Longitude}&key=${apiKey}`;
 
+    try {
+      const response = await axios.get(apiUrl);
+      return response.data.results[0]; // Return the first result (usually the most accurate)
+
+    } catch (error) {
+      throw new Error('Failed to retrieve location data.');
+    }
+    
       const res = await this.QuestionModel.create({...data,userId, likes:0});
       return res;
     

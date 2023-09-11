@@ -1,6 +1,8 @@
 
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsOptional } from 'class-validator';
+import { User_Status } from 'src/constants/user.constants';
+import { Location, LocationSchema } from 'src/schema/common/location.schema';
 
 export class CreateQuestionDto {
   @IsNotEmpty()
@@ -13,16 +15,20 @@ export class CreateQuestionDto {
   @IsNotEmpty()
   @ApiProperty({
     required: true,
-    example:'[datascientist,career]',
+    example:['apple'],
   })
   tags:string[];
 
-  @IsOptional()
+ @IsNotEmpty()
   @ApiProperty({
     required: true,
-    example:"San Francisco, CA, USA"
+    type:LocationSchema,
+    example:{
+      Latitude:'26.47104000',
+      Longitude:'91.03080000'
+    },
   })
-  location: string;
+  Location: Location;
 
   @IsOptional()
   @ApiProperty({
@@ -31,4 +37,14 @@ export class CreateQuestionDto {
   })
   
   pic: string;
+
+  @ApiProperty({
+    required: true,
+    type:String,
+    enum:Object.keys(User_Status),
+    default:User_Status.OPEN
+  
+  })
+  
+  status: User_Status;
 }

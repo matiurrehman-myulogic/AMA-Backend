@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 
 import * as moongose from 'mongoose';
+import { createUserDto } from 'src/DTO/createUser.dto';
 import { userExistsDto } from 'src/DTO/userExists.dto';
 import { Auth, AuthDocument } from 'src/schema/auth.schema';
 
@@ -35,7 +36,7 @@ export class AuthService {
     return userDetail;
   }
 
-  async create(user: Auth): Promise<Auth> {
+  async create(user: createUserDto): Promise<Auth> {
     const userPresent = await this.AuthModel.findOne({
       Phone_Number: user.Phone_Number,
     });

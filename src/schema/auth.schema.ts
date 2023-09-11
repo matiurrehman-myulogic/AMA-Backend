@@ -1,5 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
+import { Location, LocationSchema } from './common/location.schema';
+import { DefinedLocation, DefinedLocationSchema } from './common/stateCityLocation.schema';
 
 @Schema({
   timestamps: true,
@@ -13,6 +15,10 @@ export class Auth {
   ProfilePic: string;
   @Prop()
   Email: string;
+  @Prop({type:DefinedLocationSchema})
+  Location:DefinedLocation;
+  @Prop({ default:10,required:true})
+  Points:number;
 }
 export type AuthDocument= Auth & Document
 

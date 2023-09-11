@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsOptional } from 'class-validator';
+import { Location, LocationSchema } from 'src/schema/common/location.schema';
 
 export class createUserDto {
   @IsNotEmpty()
@@ -29,4 +30,11 @@ export class createUserDto {
     example: 'http://uri.com',
   })
   ProfilePic: string;
+
+@IsNotEmpty()
+  @ApiProperty({
+    required: true,
+    type:LocationSchema
+  })
+  Location: Location;
 }

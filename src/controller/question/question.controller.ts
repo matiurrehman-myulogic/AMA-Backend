@@ -1,10 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req, UseGuards, , UseMiddle } from '@nestjs/common';
 import { QuestionService } from './question.service';
 
 import { UpdateQuestionDto } from './dto/update-question.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CreateQuestionDto } from 'src/DTO/create-question.dto';
 import { AuthGuard } from 'src/AuthGuard/authGuard';
+import { UserPointsMiddleware } from './../../Middlewares/user-points.middleware';
 @UseGuards(AuthGuard)
 @ApiBearerAuth('JWT')
 @ApiTags('Question')
@@ -14,8 +15,8 @@ export class QuestionController {
 // @UseGuards(AuthGuard)
 // @ApiBearerAuth('JWT')
   @Post('add')
-
   create(@Body() createQuestionDto: CreateQuestionDto,  @Req() req: any) {
+    
     return this.questionService.create({
       data:createQuestionDto,
       userId:req.payload.id,
