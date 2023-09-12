@@ -22,19 +22,32 @@ export class QuestionService {
   ) {}
 
   async create({userId,data}): Promise<Question> {
-    const apiKey = this.config.get<string>('GOOGLE_MAPS_API_KEY');
-    const apiUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${data.Location.Latitude},${data.Location.Longitude}&key=${apiKey}`;
+    // const apiKey = this.config.get<string>('GOOGLE_MAPS_API_KEY');
+    // const apiUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${data.Location.Latitude},${data.Location.Longitude}&key=${apiKey}`;
 
-    try {
-      const response = await axios.get(apiUrl);
-      return response.data.results[0]; // Return the first result (usually the most accurate)
+    // try {
+    //   const response = await axios.get(apiUrl);
+    //   return response.data.results[0]; // Return the first result (usually the most accurate)
 
-    } catch (error) {
-      throw new Error('Failed to retrieve location data.');
-    }
-    
+    // } catch (error) {
+    //   throw new Error('Failed to retrieve location data.');
+    // }
+ console.log("points",data)
+
+      const updatedUser = await this.UserModel.findOneAndUpdate(
+        { _id: userId },
+        { $inc: { Points: -2 } }, // Use $inc to decrement the Points field by 2
+        { new: true } // To return the updated document
+      );
+
       const res = await this.QuestionModel.create({...data,userId, likes:0});
       return res;
+
+    
+    
+     
+    
+      
     
   }
 

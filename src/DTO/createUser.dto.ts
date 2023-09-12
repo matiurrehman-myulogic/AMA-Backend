@@ -1,6 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsNotEmpty, IsOptional, ValidateNested } from 'class-validator';
 import { Location, LocationSchema } from 'src/schema/common/location.schema';
+import { LocationDTO } from './Location.dto';
 
 export class createUserDto {
   @IsNotEmpty()
@@ -30,11 +32,12 @@ export class createUserDto {
     example: 'http://uri.com',
   })
   ProfilePic: string;
-
+@ValidateNested()
+@Type(()=>LocationDTO)
 @IsNotEmpty()
   @ApiProperty({
     required: true,
-    type:LocationSchema
+    type:LocationDTO
   })
   Location: Location;
 }

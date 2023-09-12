@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req, UseGuards, , UseMiddle } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req, UseGuards, MiddlewareConsumer } from '@nestjs/common';
 import { QuestionService } from './question.service';
 
 import { UpdateQuestionDto } from './dto/update-question.dto';
@@ -15,8 +15,10 @@ export class QuestionController {
 // @UseGuards(AuthGuard)
 // @ApiBearerAuth('JWT')
   @Post('add')
+
   create(@Body() createQuestionDto: CreateQuestionDto,  @Req() req: any) {
     
+
     return this.questionService.create({
       data:createQuestionDto,
       userId:req.payload.id,

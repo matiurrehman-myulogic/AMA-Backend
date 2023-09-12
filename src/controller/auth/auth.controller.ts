@@ -21,11 +21,13 @@ export class AuthController {
   async getAllUsers(): Promise<Auth[]> {
     return this.userService.findAll();
   }
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @Get('userById')
 
   async findById (@Req() req:any) {
 
-    
+    console.log("olp",req.payload.id)
     return this.userService.findById(req.payload.id);
   }
   @Post('check-user')

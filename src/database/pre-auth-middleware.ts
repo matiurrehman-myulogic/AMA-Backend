@@ -1,7 +1,8 @@
-import { Injectable, NestMiddleware } from '@nestjs/common';
+import { Injectable, NestMiddleware, UseGuards } from '@nestjs/common';
 import * as firebase from 'firebase-admin';
 import { Request, Response } from 'express';
 import { FirebaseApp } from './firebase-app';
+import { AuthGuard } from 'src/AuthGuard/authGuard';
 
 @Injectable()
 export class PreAuthMiddleware implements NestMiddleware {
@@ -17,7 +18,9 @@ export class PreAuthMiddleware implements NestMiddleware {
       this.auth
         .verifyIdToken(token.replace('Bearer ', ''))
         .then(async (decodedToken) => {
+          console.log("fffff",decodedToken)
           req['user'] = {
+            phone_number:decodedToken.phone_number,
             email: decodedToken.email,
             roles: (decodedToken.roles || []),
             type: decodedToken.type,

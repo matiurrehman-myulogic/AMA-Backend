@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod, UseGuards } from '@nestjs/common';
 import { QuestionService } from './question.service';
 import { QuestionController } from './question.controller';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -10,16 +10,24 @@ import { FirebaseApp } from 'src/database/firebase-app';
 import { FirebaseModule } from 'src/database/firebase.module';
 import { AuthModule } from '../auth/auth.module';
 import { UserPointsMiddleware } from 'src/Middlewares/user-points.middleware';
+import { AuthGuard } from 'src/AuthGuard/authGuard';
+import { PreAuthMiddleware } from './../../database/pre-auth-middleware';
+import { CustomAuthMiddleware } from 'src/Middlewares/auth-middleware';
 
 @Module({
   imports: [FirebaseModule],
 
   controllers: [QuestionController],
-  providers: [QuestionService],
+  providers: [QuestionService,AuthService,AuthGuard],
 })
 export class QuestionModule implements NestModule {
-
+// @UseGuards(AuthGuard)
 configure(consumer: MiddlewareConsumer) {
-  consumer.apply(UserPointsMiddleware).forRoutes({path:'questions',method:RequestMethod.POST})
+
+  consumer
+  .apply(CustomAuthMiddleware) // Apply your AuthGuard first
+  .forRoutes({ path: 'questions/add', method: RequestMethod.POST })
+  .apply(UserPointsMiddleware) // Apply your middleware to the same route
+  .forRoutes({ path: 'questions/add', method: RequestMethod.POST });
 }
 }

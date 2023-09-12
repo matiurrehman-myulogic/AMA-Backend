@@ -5,6 +5,7 @@ import * as moongose from 'mongoose';
 import { createUserDto } from 'src/DTO/createUser.dto';
 import { userExistsDto } from 'src/DTO/userExists.dto';
 import { Auth, AuthDocument } from 'src/schema/auth.schema';
+import { ObjectId } from 'mongoose'; // Import ObjectId from mongoose
 
 @Injectable()
 export class AuthService {
@@ -28,11 +29,15 @@ export class AuthService {
     }
   }
 
-  async findById(id:any)  {
+  async findById(id:moongose.Types.ObjectId)  {
+    console.log("kl",id)
+ // Convert the string to ObjectId
+ // Convert the string to ObjectId
+
     const userDetail = await this.AuthModel.findOne({
-      id:id
+      _id:id
     })
-    
+  console.log("ussseerr",userDetail)
     return userDetail;
   }
 

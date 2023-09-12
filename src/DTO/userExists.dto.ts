@@ -9,5 +9,4 @@ export class userExistsDto {
   })
   Phone_Number: string;
 
-  
 }
