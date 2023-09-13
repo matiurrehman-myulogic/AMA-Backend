@@ -4,7 +4,7 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { Request } from 'express';
+import { Request, response } from 'express';
 
 import * as firebase from 'firebase-admin';
 import { InjectModel } from '@nestjs/mongoose';
@@ -31,7 +31,9 @@ export class AuthGuard implements CanActivate {
     //   id: "64f0599a9f63288eebac4dca",
    
     // };
+    
     const token = this.extractTokenFromHeader(request);
+ 
     if (token != null && token != '') {
       try {
         const decodedToken = await this.auth.verifyIdToken(
@@ -59,8 +61,14 @@ export class AuthGuard implements CanActivate {
           return true;
         }
       } catch (error) {
-        console.log(error);
-        throw new UnauthorizedException(`Authorization header is required`);
+        // console.log(error);
+        // throw new UnauthorizedException(`Authorization header is required`);
+      //  response.status(403)
+      
+       request.res.status(403).json({ message:"Authorization header is required" ,error:403}); // Send the custom error message with a 403 status code
+
+      //  sendForbiddenResponse(request, 'Token has expired'); // Send a custom error message
+
       }
     }
     return false;
