@@ -13,6 +13,7 @@ import { QuestionModule } from './controller/question/question.module';
 import { MongooseModelsModule } from './schema/mongoose-models.module';
 import { FirebaseApp } from './database/firebase-app';
 import { FirebaseModule } from './database/firebase.module';
+import { ChatModule } from './controller/chat/chat.module';
 
 @Module({
   imports: [
@@ -22,7 +23,8 @@ import { FirebaseModule } from './database/firebase.module';
     QuestionModule,
     Auth,
     MongooseModelsModule,
-    FirebaseModule
+    FirebaseModule,
+    ChatModule
   ],
 
   controllers: [AppController],
