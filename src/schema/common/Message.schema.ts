@@ -5,7 +5,7 @@ import { Message_Type } from "src/constants/messageType.constants";
 @Schema()
 export class Message{
     @Prop({ type: Types.ObjectId, ref:Auth.name, required: true })
-    sender:  Types.ObjectId|Auth;
+    senderId:  Types.ObjectId|Auth;
   
     @Prop({ required: true })
     message: string;
