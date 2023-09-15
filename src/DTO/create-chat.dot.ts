@@ -9,14 +9,14 @@ export class CreateChatDto {
   @IsNotEmpty()
   @ApiProperty({
     required: true,
-    example: 'j8474HJHH',
+    example: "64fff6faac0b2193cbed657b",
   })
   roomId: string;
 
   @IsNotEmpty()
   @ApiProperty({
     required: true,
-    example:'jhedjefhefeufe',
+    example:'64fec0bbce7c501f5634d440',
   })
   questionerId:string;
 
@@ -24,11 +24,11 @@ export class CreateChatDto {
   @ApiProperty({
     required: true,
     default:null,
-    example:'jhedjefhefeufe',
+    example:'64fec0bbce7c501f5634d440',
   })
   answererId:string;
 
-  @IsNotEmpty()
+
   @ApiProperty({
     required: true,
     default:[]

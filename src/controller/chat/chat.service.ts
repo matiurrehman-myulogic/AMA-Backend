@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { CreateChatDto } from './dto/create-chat.dto';
-import { UpdateChatDto } from './dto/update-chat.dto';
+
 import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import { Chat, ChatDocument } from 'src/schema/chat.schema';
 import * as mongoose from 'mongoose';
+import { CreateChatDto } from 'src/DTO/create-chat.dot';
 
 @Injectable()
 export class ChatService {
@@ -35,7 +35,7 @@ export class ChatService {
     return `This action returns a #${id} chat`;
   }
 
-  update(id: number, updateChatDto: UpdateChatDto) {
+  update(id: number, updateChatDto: any) {
     return `This action updates a #${id} chat`;
   }
 
