@@ -31,6 +31,11 @@ export class QuestionController {
     return this.questionService.findAll();
   }
 
+  @Get('/unAnswered')
+  unAnsweredQUestions() {
+    return this.questionService.unAnsweredQuestions();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.questionService.findOne(+id);
