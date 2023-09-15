@@ -23,8 +23,12 @@ export class ChatService {
 
   }
 
-  findAll() {
-    return `This action returns all chat`;
+  async findChatroom(id: mongoose.Types.ObjectId) {
+    const userDetail = await this.ChatModel.findOne({
+      roomId:id
+    })
+  console.log("ussseerr",userDetail)
+    return userDetail;
   }
 
   findOne(id: number) {
