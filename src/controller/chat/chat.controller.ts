@@ -9,9 +9,8 @@ export class ChatController {
 
   @Post()
   create(@Body() createChatDto: CreateChatDto) {
-    return this.chatService.create(createChatDto);
-  }
-
+      return this.chatService.createRoom(createChatDto);
+    }
   @Get()
   findAll() {
     return this.chatService.findAll();

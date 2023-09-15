@@ -4,6 +4,7 @@ import { Message_Type } from 'src/constants/messageType.constants';
 import { Auth } from './auth.schema';
 import { Message } from './common/Message.schema';
 import { Question } from './question.schema';
+import { type } from 'os';
 @Schema({
   timestamps: true,
 })
@@ -17,8 +18,10 @@ export class Chat {
   @Prop({ type: [{ type: Types.ObjectId, ref: Auth.name }] })
   answererId: Types.ObjectId | Auth;
 
-  @Prop({ type: [{ type: Types.ObjectId, ref: Message }] })
+  @Prop({type:Message})
   messages: Message[];
 }
+export type ChatDocument=Chat & Document
+
 
 export const ChatSchema = SchemaFactory.createForClass(Chat);
