@@ -5,6 +5,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Chat, ChatDocument } from 'src/schema/chat.schema';
 import * as mongoose from 'mongoose';
 import { CreateChatDto } from 'src/DTO/create-chat.dot';
+import { FindChatDto } from 'src/DTO/findchat-dto';
 
 @Injectable()
 export class ChatService {
@@ -23,9 +24,11 @@ export class ChatService {
 
   }
 
-  async findChatroom(id: mongoose.Types.ObjectId) {
+  async findChatroom(id:string) {
+    const objectId = new mongoose.Types.ObjectId(id);
+
     const userDetail = await this.ChatModel.findOne({
-      roomId:id
+      roomId:objectId
     })
   console.log("ussseerr",userDetail)
     return userDetail;

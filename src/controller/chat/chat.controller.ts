@@ -4,7 +4,8 @@ import * as mongoose from 'mongoose';
 import { ApiBearerAuth, ApiParam, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/AuthGuard/authGuard';
 import { CreateChatDto } from 'src/DTO/create-chat.dot';
-@UseGuards(AuthGuard)
+import { FindChatDto } from 'src/DTO/findchat-dto';
+// @UseGuards(AuthGuard)
 @ApiBearerAuth('JWT')
 @ApiTags('Chat')
 
@@ -16,14 +17,13 @@ export class ChatController {
   create(@Body() createChatDto: CreateChatDto) {
       return this.chatService.createRoom(createChatDto);
     }
-//   @Get(':id')
-//   // @ApiParam({ name: 'id', type: mongoose.Types.ObjectId, description: 'The ID of the chatroom' })
-// // @Param('id') id: string
-//   findChatroom(@Param() params: any) {
-//     return this.chatService.findChatroom(params.);
-//   }
-  @Get(':idd')
-  findChatroom(@Param('idd') id: mongoose.Types.ObjectId) {
+  @Get(':id')
+  // @ApiParam({ name: 'id', type: mongoose.Types.ObjectId, description: 'The ID of the chatroom' })
+// @Param('id') id: string
+  // findChatroom(@Body() id:FindChatDto) {
+  //   return this.chatService.findChatroom(id);
+  // }
+  findChatroom(@Param('id') id:string) {
     return this.chatService.findChatroom(id);
   }
 
@@ -33,10 +33,10 @@ export class ChatController {
   //   return this.chatService.findOne(+id);
   // }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateChatDto:any) {
-    return this.chatService.update(+id, updateChatDto);
-  }
+  // @Get(':id')
+  // updafindChatroomte(@Param('id') id:string , @Body() updateChatDto:any) {
+  //   return this.chatService.update(+id, updateChatDto);
+  // }
 
   // @Delete(':id')
   // remove(@Param('id') id: string) {
