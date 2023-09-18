@@ -5,6 +5,7 @@ import { ApiBearerAuth, ApiParam, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/AuthGuard/authGuard';
 import { CreateChatDto } from 'src/DTO/create-chat.dot';
 import { FindChatDto } from 'src/DTO/findchat-dto';
+import { UpdateChatDto } from 'src/DTO/updateChat.dto';
 // @UseGuards(AuthGuard)
 @ApiBearerAuth('JWT')
 @ApiTags('Chat')
@@ -13,7 +14,7 @@ import { FindChatDto } from 'src/DTO/findchat-dto';
 export class ChatController {
   constructor(private readonly chatService: ChatService) {}
 
-  @Post()
+  @Post('create')
   create(@Body() createChatDto: CreateChatDto) {
       return this.chatService.createRoom(createChatDto);
     }
@@ -33,10 +34,10 @@ export class ChatController {
   //   return this.chatService.findOne(+id);
   // }
 
-  // @Get(':id')
-  // updafindChatroomte(@Param('id') id:string , @Body() updateChatDto:any) {
-  //   return this.chatService.update(+id, updateChatDto);
-  // }
+  @Patch(':id')
+  updafindChatroom(@Param('id') id:string,@Body() updateChatDto:UpdateChatDto) {
+    return this.chatService.updateChatMessage(updateChatDto,id);
+  }
 
   // @Delete(':id')
   // remove(@Param('id') id: string) {

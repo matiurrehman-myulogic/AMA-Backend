@@ -8,6 +8,7 @@ import * as mongoose from 'mongoose';
 import { Auth, AuthDocument } from 'src/schema/auth.schema';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
+import { User_Status } from 'src/constants';
 @Injectable()
 export class QuestionService {
   constructor(
@@ -75,14 +76,13 @@ export class QuestionService {
   }
   async unAnsweredQuestions() {
     try {
-      const user = await this.QuestionModel.find({status:
-        "OPEN"});
+      const user = await this.QuestionModel.find({ status: User_Status.OPEN });
       console.log(user);
 
       if (user) {
         const filteredData = await Promise.all(
           user.map(async (item: any) => {
-            const id = item.userId; 
+            const id = item.userId;
             const userPresent = await this.UserModel.findOne({ _id: id });
             console.log('userrr', userPresent);
 
@@ -113,10 +113,17 @@ export class QuestionService {
   }
   updateLikesIncrement(id: string) {}
 
-  findOne(id: number) {
-    return `This action returns a #${id} question`;
-  }
+  async findById(id:string)  {
+    console.log("kl",id)
+ // Convert the string to ObjectId
+ // Convert the string to ObjectId
 
+    const questionDetails = await this.QuestionModel.findOne({
+      _id:id
+    })
+  console.log("ussseerr",questionDetails)
+    return questionDetails;
+  }
   update(id: number, UpdateQuestionDto: UpdateQuestionDto) {
     return `This action updates a #${id} question`;
   }
