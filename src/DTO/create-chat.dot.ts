@@ -23,7 +23,6 @@ export class CreateChatDto {
   @IsNotEmpty()
   @ApiProperty({
     required: true,
-    default:null,
     example:'64fec0bbce7c501f5634d440',
   })
   answererId:string;

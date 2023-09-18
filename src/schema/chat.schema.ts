@@ -1,5 +1,5 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
+import mongoose, { Document, Types } from 'mongoose';
 import { Message_Type } from 'src/constants/messageType.constants';
 import { Auth } from './auth.schema';
 import { Message } from './common/Message.schema';
@@ -10,16 +10,17 @@ import { type } from 'os';
 })
 @Schema()
 export class Chat {
-  @Prop({ type: [{ type: Types.ObjectId, ref: Question.name }] })
-  roomId: Types.ObjectId | Question;
+@Prop({ type: Types.ObjectId, ref: Question.name })
+roomId: Types.ObjectId;
 
-  @Prop({ type: [{ type: Types.ObjectId, ref: Auth.name }] })
-  questionerId: Types.ObjectId | Auth;
-  @Prop({ type: [{ type: Types.ObjectId, ref: Auth.name }] })
-  answererId: Types.ObjectId | Auth;
+@Prop({ type: Types.ObjectId, ref: Auth.name })
+questionerId: Types.ObjectId;
 
-  @Prop({type:Message})
-  messages: Message[];
+@Prop({ type: Types.ObjectId, ref: Auth.name })
+answererId: Types.ObjectId;
+
+@Prop({ type: Message })
+messages: Message[];
 }
 export type ChatDocument=Chat & Document
 

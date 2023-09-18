@@ -13,35 +13,45 @@ import { User_Status } from 'src/constants';
 @Injectable()
 export class ChatService {
   constructor(
-    private config:ConfigService,
+    private config: ConfigService,
     @InjectModel(Chat.name)
     private ChatModel: mongoose.Model<ChatDocument>,
-  
+
     @InjectModel(Question.name)
     private QuestinModel: mongoose.Model<QuentionDocument>,
-  
- 
   ) {}
-  async createRoom(data:CreateChatDto):Promise<Chat> {
-   
-    const res = await this.ChatModel.create({...data});
+  async createRoom(data: CreateChatDto): Promise<Chat> {
+    //  console.log('djfdkjf',data)
+    const { roomId, questionerId, answererId } = data;
+
+  // const roomId= new mongoose.Types.ObjectId(data.roomId);
+  // const questionerId= new mongoose.Types.ObjectId(data.questionerId);
+  // const answererId= new mongoose.Types.ObjectId(data.answererId);
+console.log(answererId)
+    const res = await this.ChatModel.create(
+    {
+      roomId:new mongoose.Types.ObjectId(data.roomId), // Convert the string to ObjectId
+      questionerId:new mongoose.Types.ObjectId(data.questionerId), // Convert the string to ObjectId
+      answererId:new mongoose.Types.ObjectId(data.answererId), // Convert the string to ObjectId
+    }
+    );
+    console.log(res)
     const question = await this.QuestinModel.findByIdAndUpdate(
-      data.roomId,
-      { status: User_Status.INPROGRESS},
+      roomId,
+      { status: User_Status.OPEN},
       { new: true }
     );
 
     return res;
-
   }
 
-  async findChatroom(id:string) {
+  async findChatroom(id: string) {
     const objectId = new mongoose.Types.ObjectId(id);
 
     const userDetail = await this.ChatModel.findOne({
-      roomId:objectId
-    })
-  console.log("ussseerr",userDetail)
+      roomId: objectId,
+    });
+    console.log('ussseerr', userDetail);
     return userDetail;
   }
 
@@ -49,13 +59,13 @@ export class ChatService {
     return `This action returns a #${id} chat`;
   }
 
-  async updateChatMessage(updateChatDto:UpdateChatDto,roomId:any) {
+  async updateChatMessage(updateChatDto: UpdateChatDto, roomId: any) {
     const objectId = new mongoose.Types.ObjectId(roomId);
-    console.log('roomIdkkk',updateChatDto)
+    console.log('roomIdkkk', updateChatDto);
 
     const updatedDocument = await this.ChatModel.findOneAndUpdate(
       { roomId: objectId },
-      { $push: { messages:{...updateChatDto} } }, // Use $push to add a new element to the messages array
+      { $push: { messages: { ...updateChatDto } } }, // Use $push to add a new element to the messages array
       { new: true },
     );
 
