@@ -27,7 +27,7 @@ export class ChatService {
     const res = await this.ChatModel.create({...data});
     const question = await this.QuestinModel.findByIdAndUpdate(
       data.roomId,
-      { questionStatus: User_Status.INPROGRESS},
+      { status: User_Status.INPROGRESS},
       { new: true }
     );
 
@@ -49,11 +49,13 @@ export class ChatService {
     return `This action returns a #${id} chat`;
   }
 
-  async updateChatMessage(updateChatDto:UpdateChatDto,roomId:string) {
- 
-    const updatedDocument = await this.ChatModel.findByIdAndUpdate(
-      { roomId },
-      { $push: { messages:{updateChatDto} } }, // Use $push to add a new element to the messages array
+  async updateChatMessage(updateChatDto:UpdateChatDto,roomId:any) {
+    const objectId = new mongoose.Types.ObjectId(roomId);
+    console.log('roomIdkkk',updateChatDto)
+
+    const updatedDocument = await this.ChatModel.findOneAndUpdate(
+      { roomId: objectId },
+      { $push: { messages:{...updateChatDto} } }, // Use $push to add a new element to the messages array
       { new: true },
     );
 

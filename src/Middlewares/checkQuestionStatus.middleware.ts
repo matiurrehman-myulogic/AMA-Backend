@@ -18,7 +18,8 @@ import { User_Status } from 'src/constants';
 export class CheckQuestionStatusMiddleware implements NestMiddleware {
   constructor(private readonly questionService: QuestionService) {}
   async use(req: any, @Res() res: any, next: NextFunction) {
-    const question = await this.questionService.findById(req.payload.id);
+    console.log('req',req.body)
+    const question = await this.questionService.findById(req.body.roomId);
     console.log('user', question);
     if (question.status == User_Status.OPEN) {
       next();

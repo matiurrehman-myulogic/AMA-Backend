@@ -18,6 +18,7 @@ export class Message{
       
       })
       
+      
      messageType : Message_Type;
 
      @Prop()
