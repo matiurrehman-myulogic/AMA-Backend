@@ -117,9 +117,9 @@ export class QuestionService {
     console.log("kl",id)
  // Convert the string to ObjectId
  // Convert the string to ObjectId
-
+ const objectId = new mongoose.Types.ObjectId(id);
     const questionDetails = await this.QuestionModel.findOne({
-      _id:id
+      _id:objectId
     })
   console.log("ussseerr",questionDetails)
     return questionDetails;
