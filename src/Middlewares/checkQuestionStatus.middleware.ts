@@ -21,21 +21,29 @@ export class CheckQuestionStatusMiddleware implements NestMiddleware {
     console.log('req',req.body)
     const question = await this.questionService.findById(req.body.roomId);
     console.log('user', question);
-    if (question.status == User_Status.OPEN) {
-      next();
-    } else if (question.status == User_Status.CLOSE) {
-      res
-        .status(403)
-        .json({
-          message:
-            'The question is already resolved successfully.Please try answering other unresolved questions',
-        });
-    } else if (question.status == User_Status.INPROGRESS) {
-      res
-        .status(403)
-        .json({ message: 'The question is currently in progress' });
-    } else {
-      res.status(403).json({ message: 'The state is undefined' });
-    }
+if(req.payload.id !==req.body.questionerId)
+{
+    if (question.status == User_Status.OPEN ) {
+        next();
+      } else if (question.status == User_Status.CLOSE) {
+        res
+          .status(403)
+          .json({
+            message:
+              'The question is already resolved successfully.Please try answering other unresolved questions',
+          });
+      } else if (question.status == User_Status.INPROGRESS) {
+        res
+          .status(403)
+          .json({ message: 'The question is currently in progress' });
+      } else {
+        res.status(403).json({ message: 'The state is undefined' });
+      }
+}
+else
+{
+    res.status(403).json({ message: 'You are not allowed to ans your own question' });
+
+}
   }
 }
