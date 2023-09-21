@@ -15,6 +15,7 @@ import { FirebaseApp } from './database/firebase-app';
 import { FirebaseModule } from './database/firebase.module';
 import { ChatModule } from './controller/chat/chat.module';
 
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),

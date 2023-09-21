@@ -6,13 +6,16 @@ import { AuthGuard } from 'src/AuthGuard/authGuard';
 import { CreateChatDto } from 'src/DTO/create-chat.dot';
 import { FindChatDto } from 'src/DTO/findchat-dto';
 import { UpdateChatDto } from 'src/DTO/updateChat.dto';
+import { ChatGateway } from './chat.gateway';
 // @UseGuards(AuthGuard)
 @ApiBearerAuth('JWT')
 @ApiTags('Chat')
 
 @Controller('chat')
 export class ChatController {
-  constructor(private readonly chatService: ChatService) {}
+  constructor(private readonly chatService: ChatService,
+    private readonly chatGateway: ChatGateway
+    ) {}
 
   @Post('create')
   create(@Body() createChatDto: CreateChatDto) {
@@ -36,6 +39,18 @@ export class ChatController {
 
   @Patch(':id')
   updafindChatroom(@Param('id') id:string,@Body() updateChatDto:UpdateChatDto) {
+
+    //     const updatedChat = await this.chatService.updateChatMessage(updateChatDto, id);
+
+    // // Send a WebSocket message to inform clients about the updated chat message
+    // this.chatGateway.server.emit('chatMessage', updatedChat);
+
+    // return updatedChat;
+    
+    // return this.chatService.updateChatMessage(updateChatDto,id);
+
+
+     
     return this.chatService.updateChatMessage(updateChatDto,id);
   }
 

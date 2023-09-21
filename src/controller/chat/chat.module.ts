@@ -7,12 +7,13 @@ import { CheckQuestionStatusMiddleware } from 'src/Middlewares/checkQuestionStat
 import { AuthGuard } from 'src/AuthGuard/authGuard';
 import { QuestionService } from '../question/question.service';
 import { AuthService } from '../auth/auth.service';
+import { ChatGateway } from './chat.gateway';
 
 @Module({
   imports: [FirebaseModule],
 
-  controllers: [ChatController],
-  providers: [ChatService,AuthGuard,AuthService,QuestionService],
+  controllers: [ChatController,],
+  providers: [ChatService,AuthGuard,AuthService,QuestionService,ChatGateway],
 })
 
 export class ChatModule implements NestModule {
