@@ -38,23 +38,52 @@ console.log(answererId)
     console.log(res)
     const question = await this.QuestinModel.findByIdAndUpdate(
       roomId,
-      { status: User_Status.OPEN},
+      { status: User_Status.INPROGRESS},
       { new: true }
     );
 
     return res;
   }
 
+  // async findChatroom(id: string) {
+  //   const objectId = new mongoose.Types.ObjectId(id);
+
+  //   const userDetail = await this.ChatModel.findOne({
+  //     roomId: objectId,
+  //   });
+  //   const questionDetail = await this.QuestinModel.findOne({
+  //     _id: objectId
+  //   });
+  //   console.log('ussseerr', userDetail);
+
+  //   return userDetail;
+  // }
   async findChatroom(id: string) {
-    const objectId = new mongoose.Types.ObjectId(id);
-
-    const userDetail = await this.ChatModel.findOne({
-      roomId: objectId,
-    });
-    console.log('ussseerr', userDetail);
-    return userDetail;
+    try {
+      const objectId = new mongoose.Types.ObjectId(id);
+  
+      const userDetail = await this.ChatModel.findOne({
+        roomId: objectId,
+      });
+        const questionDetail = await this.QuestinModel.findOne({
+        _id: objectId,
+      });
+  
+      if (!userDetail && !questionDetail) {
+       console.log('Both userDetail and questionDetail not found.');
+      }
+  
+      console.log('userDetail', userDetail);
+      console.log('questionDetail', questionDetail);
+  
+      return {
+        userDetail,
+        question: questionDetail?.question,
+      };
+    } catch (error) {
+      console.error('Error in findChatroom:', error);
+    }
   }
-
   findOne(id: number) {
     return `This action returns a #${id} chat`;
   }
