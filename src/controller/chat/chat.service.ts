@@ -24,22 +24,20 @@ export class ChatService {
     //  console.log('djfdkjf',data)
     const { roomId, questionerId, answererId } = data;
 
-  // const roomId= new mongoose.Types.ObjectId(data.roomId);
-  // const questionerId= new mongoose.Types.ObjectId(data.questionerId);
-  // const answererId= new mongoose.Types.ObjectId(data.answererId);
-console.log(answererId)
-    const res = await this.ChatModel.create(
-    {
-      roomId:new mongoose.Types.ObjectId(data.roomId), // Convert the string to ObjectId
-      questionerId:new mongoose.Types.ObjectId(data.questionerId), // Convert the string to ObjectId
-      answererId:new mongoose.Types.ObjectId(data.answererId), // Convert the string to ObjectId
-    }
-    );
-    console.log(res)
+    // const roomId= new mongoose.Types.ObjectId(data.roomId);
+    // const questionerId= new mongoose.Types.ObjectId(data.questionerId);
+    // const answererId= new mongoose.Types.ObjectId(data.answererId);
+    console.log(answererId);
+    const res = await this.ChatModel.create({
+      roomId: new mongoose.Types.ObjectId(data.roomId), // Convert the string to ObjectId
+      questionerId: new mongoose.Types.ObjectId(data.questionerId), // Convert the string to ObjectId
+      answererId: new mongoose.Types.ObjectId(data.answererId), // Convert the string to ObjectId
+    });
+    console.log(res);
     const question = await this.QuestinModel.findByIdAndUpdate(
       roomId,
-      { status: User_Status.INPROGRESS},
-      { new: true }
+      { status: User_Status.INPROGRESS },
+      { new: true },
     );
 
     return res;
@@ -61,21 +59,21 @@ console.log(answererId)
   async findChatroom(id: string) {
     try {
       const objectId = new mongoose.Types.ObjectId(id);
-  
+
       const userDetail = await this.ChatModel.findOne({
         roomId: objectId,
       });
-        const questionDetail = await this.QuestinModel.findOne({
+      const questionDetail = await this.QuestinModel.findOne({
         _id: objectId,
       });
-  
+
       if (!userDetail && !questionDetail) {
-       console.log('Both userDetail and questionDetail not found.');
+        console.log('Both userDetail and questionDetail not found.');
       }
-  
+
       console.log('userDetail', userDetail);
       console.log('questionDetail', questionDetail);
-  
+
       return {
         userDetail,
         question: questionDetail?.question,
@@ -90,6 +88,7 @@ console.log(answererId)
 
   async updateChatMessage(updateChatDto: UpdateChatDto, roomId: any) {
     const objectId = new mongoose.Types.ObjectId(roomId);
+    console.log('iddddddddd', objectId);
     console.log('roomIdkkk', updateChatDto);
 
     const updatedDocument = await this.ChatModel.findOneAndUpdate(
@@ -97,7 +96,7 @@ console.log(answererId)
       { $push: { messages: { ...updateChatDto } } }, // Use $push to add a new element to the messages array
       { new: true },
     );
-
+    console.log('updateddd', updatedDocument);
     return updatedDocument;
   }
 

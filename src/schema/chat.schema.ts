@@ -19,7 +19,7 @@ questionerId: Types.ObjectId;
 @Prop({ type: Types.ObjectId, ref: Auth.name })
 answererId: Types.ObjectId;
 
-@Prop({ type: Message })
+@Prop({ type: Array })
 messages: Message[];
 }
 export type ChatDocument=Chat & Document
