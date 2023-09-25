@@ -8,7 +8,7 @@ import { type } from 'os';
 @Schema({
   timestamps: true,
 })
-@Schema()
+// @Schema()
 export class Chat {
 @Prop({ type: Types.ObjectId, ref: Question.name })
 roomId: Types.ObjectId;

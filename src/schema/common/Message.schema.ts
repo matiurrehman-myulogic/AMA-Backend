@@ -2,7 +2,9 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Types } from "mongoose";
 import { Auth } from "../auth.schema";
 import { Message_Type } from "src/constants/messageType.constants";
-@Schema()
+@Schema({
+  timestamps: true,
+})
 export class Message{
     @Prop({ type: Types.ObjectId, ref:Auth.name, required: true })
     senderId:  Types.ObjectId|Auth;
@@ -17,12 +19,12 @@ export class Message{
         default:Message_Type.TEXT
       
       })
-      
-      
      messageType : Message_Type;
 
      @Prop()
      imgageURL: string;
+     @Prop({ default: Date.now ,  required: true}) // Manually set createdAt timestamp when creating a message
+     createdAt: Date;
 }
 const schema=SchemaFactory.createForClass(Message)
 export const MessageSchema=schema;

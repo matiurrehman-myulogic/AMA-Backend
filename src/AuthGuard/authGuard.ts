@@ -23,17 +23,14 @@ export class AuthGuard implements CanActivate {
     this.auth = firebaseApp.getAuth();
   }
   async canActivate(context: ExecutionContext): Promise<boolean> {
-
-
-    
     const request = context.switchToHttp().getRequest();
     // request['payload'] = {
     //   id: "64f0599a9f63288eebac4dca",
-   
+
     // };
-    
+
     const token = this.extractTokenFromHeader(request);
- 
+
     if (token != null && token != '') {
       try {
         const decodedToken = await this.auth.verifyIdToken(
@@ -53,22 +50,20 @@ export class AuthGuard implements CanActivate {
             phone_number: phone,
             ProfilePic: userDetails.FullName,
             FullName: userDetails.FullName,
-           
           };
-
-
 
           return true;
         }
       } catch (error) {
         // console.log(error);
         // throw new UnauthorizedException(`Authorization header is required`);
-      //  response.status(403)
-      
-       request.res.status(403).json({ message:"Authorization header is required" ,error:403}); // Send the custom error message with a 403 status code
+        //  response.status(403)
 
-      //  sendForbiddenResponse(request, 'Token has expired'); // Send a custom error message
+        request.res
+          .status(403)
+          .json({ message: 'Authorization header is required', error: 403 }); // Send the custom error message with a 403 status code
 
+        //  sendForbiddenResponse(request, 'Token has expired'); // Send a custom error message
       }
     }
     return false;
