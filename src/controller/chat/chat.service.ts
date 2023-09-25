@@ -90,10 +90,10 @@ export class ChatService {
     const objectId = new mongoose.Types.ObjectId(roomId);
     console.log('iddddddddd', objectId);
     console.log('roomIdkkk', updateChatDto);
-
+console.log("dateee",Date.now())
     const updatedDocument = await this.ChatModel.findOneAndUpdate(
       { roomId: objectId },
-      { $push: { messages: { ...updateChatDto } } }, // Use $push to add a new element to the messages array
+      { $push: { messages: { ...updateChatDto,createdAt:Date.now() } } }, // Use $push to add a new element to the messages array
       { new: true },
     );
     console.log('updateddd', updatedDocument);

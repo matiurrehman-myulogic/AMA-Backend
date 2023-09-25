@@ -33,10 +33,10 @@ export class CreateQuestionDto {
   @IsOptional()
   @ApiProperty({
     required: true,
-    example: 'http://uri.com',
+    example: ['http://uri.com'],
   })
   
-  pic: string;
+  pic: string[];
 
   @ApiProperty({
     required: true,

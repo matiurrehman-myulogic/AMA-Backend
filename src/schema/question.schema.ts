@@ -16,7 +16,7 @@ export class Question {
   @Prop({default:[]})
   tags:string[];
   @Prop()
-  pic:string;
+  pic:string[];
   @Prop({type:DefinedLocationSchema})
   Location:DefinedLocation;
   @Prop({default:0})
