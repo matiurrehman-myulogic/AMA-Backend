@@ -32,12 +32,12 @@ export class ChatGateway implements OnGatewayInit {
 
   // Handle room-specific chat messages based on the room ID
   @SubscribeMessage('chatMessageRoom')
-  handleRoomSpecificChatMessage(client: Socket, payload: { roomID: string, message: any }): void {
-    const { roomID, message } = payload;
+  handleRoomSpecificChatMessage(client: Socket, payload: { selectedQuestionsRoomId: string, message: any }): void {
+    const { selectedQuestionsRoomId, message } = payload;
     // Handle room-specific chat messages here
     // You can broadcast this message to the corresponding room
-    
-    this.server.to(roomID).emit(`chatMessage_${roomID}`, message);
+    console.log("message:", message);
+    console.log("roomID:", selectedQuestionsRoomId);
+    this.server.to(selectedQuestionsRoomId).emit(`chatMessage_${selectedQuestionsRoomId}`, message);
   }
-
 }
