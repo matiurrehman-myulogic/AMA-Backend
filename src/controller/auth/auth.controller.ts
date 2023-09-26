@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UseGuards,Patch } from '@nestjs/common';
 
 
 
@@ -46,5 +46,15 @@ export class AuthController {
   ): Promise<Auth> {
     console.log('uData',user)
     return this.userService.create(user);
+  }
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @Patch('updateProfile')
+  async updateProfile(@Req() req:any,
+  @Body()
+  user: createUserDto
+): Promise<Auth>
+  {
+    return this.userService.updateProfile(req.payload.id,user);
   }
 }

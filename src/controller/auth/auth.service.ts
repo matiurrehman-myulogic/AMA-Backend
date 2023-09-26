@@ -52,4 +52,23 @@ export class AuthService {
       return res;
     }
   }
-}
+  async updateProfile(id:moongose.Types.ObjectId,updatedDATA: createUserDto): Promise<Auth>   {
+    try {
+      const user = await this.AuthModel.findByIdAndUpdate(id, updatedDATA, {
+        new: true,
+      });
+
+      if (!user) {
+        throw new Error('User not found');
+      }
+
+      return user;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+
+  }
+
+
