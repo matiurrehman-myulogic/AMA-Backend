@@ -18,16 +18,9 @@ export class AuthService {
     const user = await this.AuthModel.find();
     return user;
   }
-
-  async userExists(user: any): Promise<string> {
-    const userPresent = await this.AuthModel.findOne({
-      Phone_Number: user.Phone_Number,
-    });
-    if (userPresent) {
-      return 'User exists';
-    } else {
-      return 'User not exists';
-    }
+  async checkIfPhoneNumberExists(phoneNumber: string): Promise<boolean> {
+    const user = await this.AuthModel.findOne({ Phone_Number: phoneNumber }).exec();
+    return !!user; // If user is found, return true; otherwise, return false
   }
 
   async findById(id:moongose.Types.ObjectId)  {

@@ -18,7 +18,6 @@ export class QuestionService {
     private QuestionModel: mongoose.Model<QuentionDocument>,
     @InjectModel(Auth.name)
     private UserModel: mongoose.Model<AuthDocument>,
-
   ) {}
 
   async create({ userId, data }): Promise<Question> {
@@ -47,12 +46,13 @@ export class QuestionService {
   async findAll() {
     try {
       const user = await this.QuestionModel.find();
-      console.log(user);
+      console.log("ghghghghg",user);
 
       if (user) {
         const filteredData = await Promise.all(
           user.map(async (item: any) => {
             const id = item.userId;
+            console.log('vjevk', id);
             const userPresent = await this.UserModel.findOne({ _id: id });
             console.log('userrr', userPresent);
 
@@ -79,14 +79,14 @@ export class QuestionService {
   async unAnsweredQuestions() {
     try {
       const user = await this.QuestionModel.find({ status: User_Status.OPEN });
-      console.log(user);
+      console.log("lllll",user);
 
       if (user) {
         const filteredData = await Promise.all(
           user.map(async (item: any) => {
             const id = item.userId;
             const userPresent = await this.UserModel.findOne({ _id: id });
-            console.log('userrr', userPresent);
+            console.log('userrrffffff', userPresent);
 
             return {
               ProfilePic: userPresent.ProfilePic,
@@ -115,15 +115,15 @@ export class QuestionService {
   }
   updateLikesIncrement(id: string) {}
 
-  async findById(id:string)  {
-    console.log("kl",id)
- // Convert the string to ObjectId
- // Convert the string to ObjectId
- const objectId = new mongoose.Types.ObjectId(id);
+  async findById(id: string) {
+    console.log('kl', id);
+    // Convert the string to ObjectId
+    // Convert the string to ObjectId
+    const objectId = new mongoose.Types.ObjectId(id);
     const questionDetails = await this.QuestionModel.findOne({
-      _id:objectId
-    })
-  console.log("ussseerr",questionDetails)
+      _id: objectId,
+    });
+    console.log('ussseerr', questionDetails);
     return questionDetails;
   }
   update(id: number, UpdateQuestionDto: UpdateQuestionDto) {
