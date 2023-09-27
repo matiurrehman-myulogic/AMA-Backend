@@ -19,6 +19,8 @@ export class Auth {
   Location:DefinedLocation;
   @Prop({ default:10,required:true})
   Points:number;
+  @Prop()
+  FCM:string;
 }
 export type AuthDocument= Auth & Document
 

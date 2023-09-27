@@ -40,4 +40,11 @@ export class createUserDto {
     type:LocationDTO
   })
   Location: Location;
+
+  
+  @IsOptional()
+  @ApiProperty({
+    example: 'HGHGHHHJGHGHGHHGH',
+  })
+  FCM: string;
 }

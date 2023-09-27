@@ -9,16 +9,22 @@ import { FindChatDto } from 'src/DTO/findchat-dto';
 import { UpdateChatDto } from 'src/DTO/updateChat.dto';
 import { QuentionDocument, Question } from 'src/schema/question.schema';
 import { User_Status } from 'src/constants';
+import { FirebaseApp } from 'src/database/firebase-app';
+import { Auth, AuthDocument } from 'src/schema/auth.schema';
+import { pipeline } from 'src/Pipeline/chat-pipeline';
 
 @Injectable()
 export class ChatService {
   constructor(
     private config: ConfigService,
+    @InjectModel(Auth.name)
+    private AuthModel: mongoose.Model<AuthDocument>,
     @InjectModel(Chat.name)
     private ChatModel: mongoose.Model<ChatDocument>,
 
     @InjectModel(Question.name)
     private QuestinModel: mongoose.Model<QuentionDocument>,
+    private firebaseApp: FirebaseApp,
   ) {}
   async createRoom(data: CreateChatDto): Promise<Chat> {
     //  console.log('djfdkjf',data)
@@ -39,7 +45,17 @@ export class ChatService {
       { status: User_Status.INPROGRESS },
       { new: true },
     );
-
+    
+    const userPresent = await this.AuthModel.findById(questionerId);
+    //fcm
+    const title = 'You have a Chat request';
+    const message = `Someone wants to answer your question`;
+    await this.firebaseApp.sendPushNotification(
+      userPresent.FCM,
+      title,
+      message,
+    );
+    //fcm
     return res;
   }
 
@@ -73,7 +89,8 @@ export class ChatService {
 
       console.log('userDetail', userDetail);
       console.log('questionDetail', questionDetail);
-
+      const result = await this.ChatModel.aggregate(pipeline);
+      console.log("pipelin",result)
       return {
         userDetail,
         question: questionDetail?.question,
@@ -88,14 +105,29 @@ export class ChatService {
 
   async updateChatMessage(updateChatDto: UpdateChatDto, roomId: any) {
     const objectId = new mongoose.Types.ObjectId(roomId);
-    console.log('iddddddddd', objectId);
-    console.log('roomIdkkk', updateChatDto);
-console.log("dateee",Date.now())
+
     const updatedDocument = await this.ChatModel.findOneAndUpdate(
       { roomId: objectId },
-      { $push: { messages: { ...updateChatDto,createdAt:Date.now() } } }, // Use $push to add a new element to the messages array
+      { $push: { messages: { ...updateChatDto, createdAt: Date.now() } } }, // Use $push to add a new element to the messages array
       { new: true },
     );
+
+    // const chatDetail = await this.ChatModel.findOne({
+    //   roomId: objectId,
+    // });
+
+    const userToNotifyId =
+      new mongoose.Types.ObjectId(updateChatDto.senderId) ===
+      updatedDocument.answererId
+        ? updatedDocument.questionerId
+        : updatedDocument.answererId;
+    const userDetail = await this.AuthModel.findOne({
+      _id: userToNotifyId,
+    });
+    const title = 'New notification';
+    const message = `You got a new chat response `;
+
+    await this.firebaseApp.sendPushNotification(userDetail.FCM, title, message);
     console.log('updateddd', updatedDocument);
     return updatedDocument;
   }

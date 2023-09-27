@@ -50,6 +50,7 @@ export class AuthGuard implements CanActivate {
             phone_number: phone,
             ProfilePic: userDetails.FullName,
             FullName: userDetails.FullName,
+            FCM:userDetails.FCM
           };
 
           return true;

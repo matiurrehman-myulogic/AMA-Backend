@@ -6,6 +6,7 @@ import { createUserDto } from 'src/DTO/createUser.dto';
 import { userExistsDto } from 'src/DTO/userExists.dto';
 import { Auth, AuthDocument } from 'src/schema/auth.schema';
 import { ObjectId } from 'mongoose'; // Import ObjectId from mongoose
+import { AddFCMtokenDto } from 'src/DTO/add-FCM.dto';
 
 @Injectable()
 export class AuthService {
@@ -67,7 +68,22 @@ export class AuthService {
       throw error;
     }
   }
+  async addFCM(id:moongose.Types.ObjectId,updatedDATA:AddFCMtokenDto): Promise<Auth>   {
+   console.log("lll",id,updatedDATA)
+    try {
+      const user = await this.AuthModel.findByIdAndUpdate(id, updatedDATA, {
+        new: true,
+      });
 
+      if (!user) {
+        throw new Error('User not found');
+      }
+
+      return user;
+    } catch (error) {
+      throw error;
+    }
+  }
 
   }
 

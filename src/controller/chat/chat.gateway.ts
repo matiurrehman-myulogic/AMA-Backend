@@ -4,6 +4,7 @@ import { Server,Socket } from 'socket.io';
 
 @WebSocketGateway({ namespace: '/chat' })
 export class ChatGateway implements OnGatewayInit {
+    
   @WebSocketServer() server: Server;
 
   afterInit() {
@@ -38,6 +39,7 @@ export class ChatGateway implements OnGatewayInit {
     // You can broadcast this message to the corresponding room
     console.log("message:", message);
     console.log("roomID:", selectedQuestionsRoomId);
+
     this.server.to(selectedQuestionsRoomId).emit(`chatMessage_${selectedQuestionsRoomId}`, message);
   }
 }

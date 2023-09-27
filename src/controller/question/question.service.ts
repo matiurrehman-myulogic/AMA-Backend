@@ -9,6 +9,7 @@ import { Auth, AuthDocument } from 'src/schema/auth.schema';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
 import { User_Status } from 'src/constants';
+import { FirebaseApp } from 'src/database/firebase-app';
 @Injectable()
 export class QuestionService {
   constructor(
@@ -17,6 +18,7 @@ export class QuestionService {
     private QuestionModel: mongoose.Model<QuentionDocument>,
     @InjectModel(Auth.name)
     private UserModel: mongoose.Model<AuthDocument>,
+
   ) {}
 
   async create({ userId, data }): Promise<Question> {

@@ -9,6 +9,7 @@ import { AuthService } from './auth.service';
 import { Auth } from 'src/schema/auth.schema';
 import { createUserDto } from 'src/DTO/createUser.dto';
 import { userExistsDto } from './../../DTO/userExists.dto';
+import { AddFCMtokenDto } from 'src/DTO/add-FCM.dto';
 @ApiTags('Auth')
 
 @Controller('auth')
@@ -47,6 +48,20 @@ export class AuthController {
     console.log('uData',user)
     return this.userService.create(user);
   }
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
+  @Post('FCM')
+  async addFCM(@Req() req:any,
+    @Body()
+    fcm: AddFCMtokenDto,
+  ): Promise<Auth> {
+    console.log('uData',fcm)
+    return this.userService.addFCM(req.payload.id,fcm);
+  }
+
+
+
+
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
   @Patch('updateProfile')
