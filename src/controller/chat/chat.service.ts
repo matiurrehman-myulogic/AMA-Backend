@@ -33,6 +33,7 @@ export class ChatService {
     // const roomId= new mongoose.Types.ObjectId(data.roomId);
     // const questionerId= new mongoose.Types.ObjectId(data.questionerId);
     // const answererId= new mongoose.Types.ObjectId(data.answererId);
+    console.log("nextt",data)
     console.log(answererId);
     const res = await this.ChatModel.create({
       roomId: new mongoose.Types.ObjectId(data.roomId), // Convert the string to ObjectId
@@ -45,7 +46,7 @@ export class ChatService {
       { status: User_Status.INPROGRESS },
       { new: true },
     );
-    
+
     const userPresent = await this.AuthModel.findById(questionerId);
     //fcm
     const title = 'You have a Chat request';

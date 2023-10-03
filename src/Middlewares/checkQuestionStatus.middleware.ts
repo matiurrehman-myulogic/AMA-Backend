@@ -19,11 +19,13 @@ export class CheckQuestionStatusMiddleware implements NestMiddleware {
   constructor(private readonly questionService: QuestionService) {}
   async use(req: any, @Res() res: any, next: NextFunction) {
     console.log('req',req.body)
+    console.log("pauload",req.payload)
     const question = await this.questionService.findById(req.body.roomId);
     console.log('questiiiiiiooooooonnnnnn', question.status);
 if(req.payload.id !==req.body.questionerId)
 {
     if (question.status == User_Status.OPEN ) {
+        console.log(next)
       next();
     } else if (question.status == User_Status.CLOSE) {
       res

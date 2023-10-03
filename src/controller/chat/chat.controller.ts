@@ -16,7 +16,8 @@ import { CreateChatDto } from 'src/DTO/create-chat.dot';
 import { FindChatDto } from 'src/DTO/findchat-dto';
 import { UpdateChatDto } from 'src/DTO/updateChat.dto';
 import { ChatGateway } from './chat.gateway';
-
+@UseGuards(AuthGuard)
+@ApiBearerAuth('JWT')
 @ApiTags('Chat')
 @Controller('chat')
 export class ChatController {
@@ -29,8 +30,7 @@ export class ChatController {
   create(@Body() createChatDto: CreateChatDto) {
     return this.chatService.createRoom(createChatDto);
   }
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('JWT')
+
   @Get(':id')
   // @ApiParam({ name: 'id', type: mongoose.Types.ObjectId, description: 'The ID of the chatroom' })
   // @Param('id') id: string

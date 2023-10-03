@@ -22,7 +22,7 @@ export class ChatModule implements NestModule {
 
     consumer
     .apply(CustomAuthMiddleware) // Apply your AuthGuard first
-    .forRoutes({ path: 'chat', method: RequestMethod.ALL })
+    .forRoutes({ path: 'chat/**', method: RequestMethod.ALL })
     .apply(CheckQuestionStatusMiddleware) // Apply your middleware to the same route
     .forRoutes({ path: 'chat/create', method: RequestMethod.POST });
   }
