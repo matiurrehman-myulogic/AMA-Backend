@@ -11,6 +11,11 @@ export class CreateQuestionDto {
     example: 'Can anyone tell me how to start my career as Data scientist?',
   })
   question: string;
+ @IsOptional()
+  @ApiProperty({
+    example: 'samplemusic.mp3',
+  })
+  voice: string;
 
   @IsNotEmpty()
   @ApiProperty({

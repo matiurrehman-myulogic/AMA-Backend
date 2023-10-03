@@ -13,6 +13,8 @@ export class Question {
   userId:Types.ObjectId|Auth;
   @Prop({required:true})
   question: string;
+  @Prop()
+  voice: string;
   @Prop({default:[]})
   tags:string[];
   @Prop()

@@ -22,8 +22,7 @@ import { ChatModule } from './controller/chat/chat.module';
     DatabaseModule,
     AuthModule,
     QuestionModule,
-    Auth,
-    MongooseModelsModule,
+     MongooseModelsModule,
     FirebaseModule,
     ChatModule
   ],
