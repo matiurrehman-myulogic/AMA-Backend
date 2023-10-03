@@ -33,8 +33,8 @@ export class AuthController {
   async getAllUsers(): Promise<Auth[]> {
     return this.userService.findAll();
   }
-  // @UseGuards(AuthGuard)
-  // @ApiBearerAuth('JWT')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @Get('userById')
   async findById(@Req() req: any) {
     console.log('olp', req.payload.id);
@@ -49,8 +49,8 @@ export class AuthController {
     console.log('uData', user);
     return this.userService.create(user);
   }
-  // @UseGuards(AuthGuard)
-  // @ApiBearerAuth('JWT')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @Post('FCM')
   async addFCM(
     @Req() req: any,
@@ -61,8 +61,8 @@ export class AuthController {
     return this.userService.addFCM(req.payload.id, fcm);
   }
 
-  // @UseGuards(AuthGuard)
-  // @ApiBearerAuth('JWT')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT')
   @Patch('updateProfile')
   async updateProfile(
     @Req() req: any,
