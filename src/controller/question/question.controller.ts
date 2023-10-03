@@ -12,8 +12,8 @@ import { UserPointsMiddleware } from './../../Middlewares/user-points.middleware
 @Controller('questions')
 export class QuestionController {
   constructor(private readonly questionService: QuestionService) {}
-// @UseGuards(AuthGuard)
-// @ApiBearerAuth('JWT')
+@UseGuards(AuthGuard)
+@ApiBearerAuth('JWT')
   @Post('add')
 
   create(@Body() createQuestionDto: CreateQuestionDto,  @Req() req: any) {
