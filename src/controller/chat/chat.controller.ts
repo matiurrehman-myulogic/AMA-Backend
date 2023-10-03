@@ -7,7 +7,7 @@ import { CreateChatDto } from 'src/DTO/create-chat.dot';
 import { FindChatDto } from 'src/DTO/findchat-dto';
 import { UpdateChatDto } from 'src/DTO/updateChat.dto';
 import { ChatGateway } from './chat.gateway';
-// @UseGuards(AuthGuard)
+@UseGuards(AuthGuard)
 @ApiBearerAuth('JWT')
 @ApiTags('Chat')
 
