@@ -54,13 +54,13 @@ export class QuestionController {
   remove(@Param('id') id: string) {
     return this.questionService.remove(+id);
   }
-  @Patch('CloseCall:id')
+  @Patch('CloseCall/:id')
 closeCall(
     @Param('id') id: string,
   ) {
     return this.questionService.CloseQuestion(id);
   }
-  @Patch('AddResponse:id')
+  @Patch('AddResponse/:id')
   AddResponse (@Body() addResponseDTO: addReponseDTO,
     @Param('id') id: string,
   ) {
