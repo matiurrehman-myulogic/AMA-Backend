@@ -43,7 +43,7 @@ export class ChatService {
     console.log(res);
     const question = await this.QuestinModel.findByIdAndUpdate(
       roomId,
-      { status: User_Status.INPROGRESS },
+      { status: User_Status.INPROGRESS,answererId:new mongoose.Types.ObjectId(data.answererId) },
       { new: true },
     );
 
@@ -80,6 +80,17 @@ export class ChatService {
       const userDetail = await this.ChatModel.findOne({
         roomId: objectId,
       });
+
+      console.log(userDetail.questionerId)
+      console.log(userDetail.answererId)
+      const questionerId=new mongoose.Types.ObjectId(userDetail.questionerId)
+      const answererId=new mongoose.Types.ObjectId(userDetail.answererId)
+
+      const answererDetail=await this.AuthModel.findById(answererId)
+      const questionerDetail=await this.AuthModel.findById(questionerId)
+
+
+
       const questionDetail = await this.QuestinModel.findOne({
         _id: objectId,
       });
@@ -95,6 +106,8 @@ export class ChatService {
       return {
         userDetail,
         question: questionDetail?.question,
+        answererDetail,
+        questionerDetail
       };
     } catch (error) {
       console.error('Error in findChatroom:', error);
@@ -136,4 +149,75 @@ export class ChatService {
   remove(id: number) {
     return `This action removes a #${id} chat`;
   }
+
+  async findInProgressChatroom(id: string) {
+    
+      const userId = new mongoose.Types.ObjectId("650044f9dd934a3a0d77d3ce");
+    const data= await  this.ChatModel.aggregate([
+        {
+          $match: {
+            $or: [
+              { "questionerId": userId },
+              { "answererId": userId }
+            ]
+          }
+        },
+        {
+          $lookup: {
+            from: "questions", // Replace with the actual name of your questions collection
+            localField: "roomId",
+            foreignField: "_id",
+            as: "question"
+          }
+        },
+        {
+          $unwind: "$question" // Unwind the resulting array from the $lookup stage
+        },
+        {
+          $match: {
+            "question.status": "INPROGRESS"
+          }
+        },
+        {
+          $project: {
+            "_id": 1, // Include the "_id" field
+            "roomId": 1, // Include the "roomId" field
+            "questionerId": 1, // Include the "questioner" field
+            "answererId": 1, // Include the "answerer" field
+            "messages": 1 ,// Include the "text" field from the embedded "question" document
+            "question.status":1,
+            "question.pic":1,
+            "question.question":1,
+          
+          }
+        }
+      ]);
+ 
+  console.log("inprogress chat",data)
+  return data;
+  }
+
+async addResponseToQuestion(id:string)
+{
+  const userId = new mongoose.Types.ObjectId("650044f9dd934a3a0d77d3ce");
+
+  const data=await this.QuestinModel.aggregate([
+    {
+      $match: {
+        "answererId": userId,
+        "answer": { $exists: false },
+        "status": "CLOSE" 
+      }
+    },
+    {
+      $sort: {
+        "createdAt": -1 // Sort by "createdAt" in descending order
+      }
+    }
+  ]);
+
+  console.log(data)
+return data;
+}
+
 }

@@ -62,4 +62,16 @@ export class ChatController {
   }
 
 
+  @Get('getInprogressChat/:id')
+
+  findActiveChatroom(@Param('id') id: string) {
+    return this.chatService.findInProgressChatroom(id);
+  }
+  @Get('addResponseToQuestion/:id')
+
+  addResponseToQuestion(@Param('id') id: string) {
+    return this.chatService.addResponseToQuestion(id);
+  }
+
+
 }

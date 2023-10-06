@@ -6,6 +6,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CreateQuestionDto } from 'src/DTO/create-question.dto';
 import { AuthGuard } from 'src/AuthGuard/authGuard';
 import { UserPointsMiddleware } from './../../Middlewares/user-points.middleware';
+import { addReponseDTO } from 'src/DTO/addResponse.dto';
 @UseGuards(AuthGuard)
 @ApiBearerAuth('JWT')
 @ApiTags('Question')
@@ -53,4 +54,24 @@ export class QuestionController {
   remove(@Param('id') id: string) {
     return this.questionService.remove(+id);
   }
+  @Patch(':id')
+closeCall(
+    @Param('id') id: string,
+  ) {
+    return this.questionService.CloseQuestion(id);
+  }
+  @Patch(':id')
+  AddResponse (@Body() addResponseDTO: addReponseDTO,
+    @Param('id') id: string,
+  ) {
+    return this.questionService.AddResponse(id,addResponseDTO);
+  
+  }
+
+  
+  @Get(':id')
+  findInProgresschats(@Param('id') id: string) {
+    return this.questionService.findInProgressChat(id);
+  }
+
 }

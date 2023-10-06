@@ -4,7 +4,7 @@ import { Server,Socket } from 'socket.io';
 
 @WebSocketGateway({ namespace: '/chat' })
 export class ChatGateway implements OnGatewayInit {
-    
+
   @WebSocketServer() server: Server;
 
   afterInit() {
@@ -42,4 +42,10 @@ export class ChatGateway implements OnGatewayInit {
 
     this.server.to(selectedQuestionsRoomId).emit(`chatMessage_${selectedQuestionsRoomId}`, message);
   }
+  @SubscribeMessage('closeCall') // Custom event for closing a call
+  handleCloseCall(client: Socket, payload: { selectedQuestionsRoomId: string, message: any }): void {
+    const { selectedQuestionsRoomId, message } = payload;
+    const alertMessage = "The other person has closed the call.";
+    this.server.to(selectedQuestionsRoomId).emit(`closeCall_${selectedQuestionsRoomId}`, alertMessage);  }
 }
+

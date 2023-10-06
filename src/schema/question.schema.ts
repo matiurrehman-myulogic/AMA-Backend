@@ -11,8 +11,12 @@ import { DefinedLocation, DefinedLocationSchema } from './common/stateCityLocati
 export class Question {
   @Prop ({type:Types.ObjectId,ref:Auth.name,required:true})
   userId:Types.ObjectId|Auth;
+  @Prop ({type:Types.ObjectId,ref:Auth.name})
+  answererId:Types.ObjectId|Auth;
   @Prop({required:true})
   question: string;
+  @Prop()
+  answer: string;
   @Prop()
   voice: string;
   @Prop({default:[]})
@@ -33,6 +37,8 @@ export class Question {
   })
   
   status: User_Status;
+
+
 }
 export type QuentionDocument= Question & Document
 export const    QuestionSchema = SchemaFactory.createForClass(Question);

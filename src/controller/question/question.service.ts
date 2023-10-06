@@ -10,6 +10,7 @@ import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
 import { User_Status } from 'src/constants';
 import { FirebaseApp } from 'src/database/firebase-app';
+import { addReponseDTO } from 'src/DTO/addResponse.dto';
 @Injectable()
 export class QuestionService {
   constructor(
@@ -133,4 +134,34 @@ export class QuestionService {
   remove(id: number) {
     return `This action removes a #${id} question`;
   }
+  async CloseQuestion(id: string) {
+    console.log('kl', id);
+    // Convert the string to ObjectId
+    // Convert the string to ObjectId
+    const objectId = new mongoose.Types.ObjectId(id);
+    const question = await this.QuestionModel.findByIdAndUpdate(
+      objectId,
+      { status: User_Status.CLOSE },
+      { new: true },
+    );
+  }
+  async AddResponse(id: string,addReponseDTO:addReponseDTO) {
+
+    const objectId = new mongoose.Types.ObjectId(id);
+    const question = await this.QuestionModel.findByIdAndUpdate(
+      objectId,
+      { answer: addReponseDTO },
+      { new: true },
+    );
+  }
+  async findInProgressChat(id: string) {
+
+    const objectId = new mongoose.Types.ObjectId(id);
+    // const questionDetails = await this.ch.findOne({
+    //   _id: objectId,
+    // });
+    // console.log('ussseerr', questionDetails);
+    // return questionDetails;
+   
+}
 }
