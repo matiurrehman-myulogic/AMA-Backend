@@ -54,7 +54,7 @@ export class QuestionController {
   remove(@Param('id') id: string) {
     return this.questionService.remove(+id);
   }
-  @Patch(':id')
+  @Patch('CloseCall:id')
 closeCall(
     @Param('id') id: string,
   ) {
