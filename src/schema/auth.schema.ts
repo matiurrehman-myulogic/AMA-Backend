@@ -15,8 +15,24 @@ export class Auth {
   ProfilePic: string;
   @Prop()
   Email: string;
-  @Prop({type:DefinedLocationSchema})
-  Location:DefinedLocation;
+  // @Prop({type:DefinedLocationSchema})
+  // Location:DefinedLocation;
+  @Prop({
+    type: {
+      type: String,
+      enum: ['Point'], 
+      required: true,
+  
+    },
+    coordinates: {
+      type: [Number], // Specify coordinates as [longitude, latitude]
+      required: true,
+    },
+  })
+  location: {
+    type: string;
+    coordinates: number[];
+  };
   @Prop({ default:10,required:true})
   Points:number;
   @Prop()

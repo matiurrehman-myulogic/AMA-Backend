@@ -81,7 +81,25 @@ export class QuestionService {
     try {
       const user = await this.QuestionModel.find({ status: User_Status.OPEN });
       console.log("lllll",user);
-
+      // const { longitude, latitude, maxDistance } = req.query; // Assuming you receive these parameters from the client
+      const longitude = "77.5946"; // Longitude of Bengaluru
+      const latitude = "12.9716"; // Latitude of Bengaluru
+      const maxDistance = "500"; // Maximum distance in meters
+      const questions = await this.QuestionModel
+        .find({
+          'location.coordinates': {
+            $near: {
+              $geometry: {
+                type: 'Point',
+                coordinates: [parseFloat(longitude), parseFloat(latitude)],
+              },
+              $maxDistance: parseFloat(maxDistance), // in meters
+            },
+          },
+          status: User_Status.OPEN, // Add the condition for status
+        })
+        .exec();
+        console.log("questionssss",questions)
       if (user) {
         const filteredData = await Promise.all(
           user.map(async (item: any) => {
