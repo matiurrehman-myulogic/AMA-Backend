@@ -10,13 +10,13 @@ import {
 } from './common/stateCityLocation.schema';
 @Schema({
   timestamps: true,
-  indexes: [
-    {
-      fields: {
-        'location.coordinates': '2dsphere',
-      },
-    },
-  ]
+  // indexes: [
+  //   {
+  //     fields: {
+  //       'location.coordinates': '2dsphere',
+  //     },
+  //   },
+  // ]
 })
 export class Question {
   @Prop({ type: Types.ObjectId, ref: Auth.name, required: true })

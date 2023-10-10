@@ -32,14 +32,14 @@ export class createUserDto {
     example: 'http://uri.com',
   })
   ProfilePic: string;
-@ValidateNested()
-@Type(()=>LocationDTO)
-@IsNotEmpty()
-  @ApiProperty({
-    required: true,
-    type:LocationDTO
-  })
-  Location: Location;
+// @ValidateNested()
+// @Type(()=>LocationDTO)
+// @IsNotEmpty()
+//   @ApiProperty({
+//     required: true,
+//     type:LocationDTO
+//   })
+//   Location: Location;
 
   
   @IsOptional()
