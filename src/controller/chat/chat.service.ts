@@ -152,7 +152,7 @@ export class ChatService {
 
   async findInProgressChatroom(id: string) {
     
-      const userId = new mongoose.Types.ObjectId("650044f9dd934a3a0d77d3ce");
+      const userId = new mongoose.Types.ObjectId(id);
     const data= await  this.ChatModel.aggregate([
         {
           $match: {

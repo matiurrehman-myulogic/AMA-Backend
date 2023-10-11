@@ -33,7 +33,7 @@ export class QuestionService {
     // } catch (error) {
     //   throw new Error('Failed to retrieve location data.');
     // }
-    console.log('points', data);
+    console.log('question asked', data);
 
     const updatedUser = await this.UserModel.findOneAndUpdate(
       { _id: userId },
@@ -168,9 +168,11 @@ export class QuestionService {
   async AddResponse(id: string,addReponseDTO:addReponseDTO) {
 
     const objectId = new mongoose.Types.ObjectId(id);
+
+    console.log('reuuuuuus',addReponseDTO,id)
     const question = await this.QuestionModel.findByIdAndUpdate(
       objectId,
-      { answer: addReponseDTO },
+      { answer: addReponseDTO.answer },
       { new: true },
     );
   }

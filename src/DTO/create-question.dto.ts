@@ -24,16 +24,7 @@ export class CreateQuestionDto {
   })
   tags:string[];
 
- @IsNotEmpty()
-  @ApiProperty({
-    required: true,
-    type:LocationSchema,
-    example:{
-      Latitude:'26.47104000',
-      Longitude:'91.03080000'
-    },
-  })
-  Location: Location;
+
 
   @IsOptional()
   @ApiProperty({
@@ -52,4 +43,12 @@ export class CreateQuestionDto {
   })
   
   status: User_Status;
+  @IsOptional()
+  @ApiProperty({
+    type:Object
+  })
+  location: {
+    type: string;
+    coordinates:number[];
+  };
 }

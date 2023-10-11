@@ -10,7 +10,6 @@ import {
 } from './common/stateCityLocation.schema';
 @Schema({
   timestamps: true,
-
 })
 export class Question {
   @Prop({ type: Types.ObjectId, ref: Auth.name, required: true })
