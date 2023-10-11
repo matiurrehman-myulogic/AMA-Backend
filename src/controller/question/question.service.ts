@@ -85,24 +85,43 @@ export class QuestionService {
       const indexes = await this.QuestionModel.collection.getIndexes();
       console.log("indexxxesss",indexes);
       
-      const questions = await this.QuestionModel
-        .find({
-          'location.coordinates': {
-            $near: {
-              $geometry: {
-                type: 'Point',
-                coordinates:[12.962011,77.594949],
-              },
-              $maxDistance:50, // in meters
-            },
-          },
-          status: User_Status.CLOSE, // Add the condition for status
-        })
+      // const questions = await this.QuestionModel
+      //   .find({
+      //     'location.coordinates': {
+      //       $near: {
+      //         $geometry: {
+      //           type: 'Point',
+      //           coordinates:[12.9716,77.5946],
+      //         },
+      //         $maxDistance:500, // in meters
+      //       },
+      //     },
+      //     status: User_Status.OPEN, // Add the condition for status
+      //   })
         
-        .exec();
-        console.log("questionssss",questions)
+      //   .exec();
+      const nearQuestions = await this.QuestionModel.find({
+        'location.coordinates': {
+          $near: {
+            $geometry: {
+              type: 'Point',
+              coordinates: [12.9716, 77.5946],
+            },
+            $maxDistance: 500, // in meters
+          },
+        },
+        status: User_Status.OPEN,
+      }).exec();
+      
+      const questionsWithoutCoordinates = await this.QuestionModel.find({
+        'location.coordinates': { $exists: false },
+        status: User_Status.OPEN,
+      }).exec();
+      
+      // Combine the results
+      const questions = nearQuestions.concat(questionsWithoutCoordinates);
         return questions
-      if (user) {
+      if (questions) {
         const filteredData = await Promise.all(
           user.map(async (item: any) => {
             const id = item.userId;
