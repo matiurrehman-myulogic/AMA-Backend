@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { UpdateQuestionDto } from './dto/update-question.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Question, QuentionDocument } from 'src/schema/question.schema';
+import { Question, QuentionDocument, QuestionSchema } from 'src/schema/question.schema';
 
 import * as mongoose from 'mongoose';
 import { Auth, AuthDocument } from 'src/schema/auth.schema';
@@ -11,6 +11,7 @@ import axios from 'axios';
 import { User_Status } from 'src/constants';
 import { FirebaseApp } from 'src/database/firebase-app';
 import { addReponseDTO } from 'src/DTO/addResponse.dto';
+import { ChatSchema } from './../../schema/chat.schema';
 @Injectable()
 export class QuestionService {
   constructor(
@@ -80,26 +81,27 @@ export class QuestionService {
   async unAnsweredQuestions() {
     try {
       const user = await this.QuestionModel.find({ status: User_Status.OPEN });
-      console.log("lllll",user);
-      // const { longitude, latitude, maxDistance } = req.query; // Assuming you receive these parameters from the client
-      const longitude = "77.5946"; // Longitude of Bengaluru
-      const latitude = "12.9716"; // Latitude of Bengaluru
-      const maxDistance = "500"; // Maximum distance in meters
+      // console.log("ll44ll",user);
+      const indexes = await this.QuestionModel.collection.getIndexes();
+      console.log("indexxxesss",indexes);
+      
       const questions = await this.QuestionModel
         .find({
           'location.coordinates': {
             $near: {
               $geometry: {
                 type: 'Point',
-                coordinates: [parseFloat(longitude), parseFloat(latitude)],
+                coordinates:[12.962011,77.594949],
               },
-              $maxDistance: parseFloat(maxDistance), // in meters
+              $maxDistance:50, // in meters
             },
           },
-          status: User_Status.OPEN, // Add the condition for status
+          status: User_Status.CLOSE, // Add the condition for status
         })
+        
         .exec();
         console.log("questionssss",questions)
+        return questions
       if (user) {
         const filteredData = await Promise.all(
           user.map(async (item: any) => {
@@ -182,4 +184,5 @@ export class QuestionService {
     // return questionDetails;
    
 }
+
 }
