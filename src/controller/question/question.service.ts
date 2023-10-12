@@ -212,8 +212,9 @@ async findClosedQuestion() {
   //   _id: objectId,
   // });
   // console.log('ussseerr', questionDetails);
-  // return questionDetails;
-  const data=await this.QuestionModel.aggregate([
+
+
+  try{ const data=await this.QuestionModel.aggregate([
     {
       $match: {
     
@@ -227,7 +228,37 @@ async findClosedQuestion() {
       }
     }
   ]);
-  return data
+  if (data) {
+        const filteredData = await Promise.all(
+          data.map(async (item: any) => {
+            const id = item.userId;
+            const userPresent = await this.UserModel.findOne({ _id: id });
+            console.log('userrrffffff', userPresent);
 
-}
+            return {
+              ProfilePic: userPresent.ProfilePic,
+              FullName: userPresent.FullName,
+              question: {
+                ...item,
+              },
+            };
+          }),
+        );
+
+        console.log('filtered', filteredData);
+        return filteredData;
+      }
+      return []; // Return an empty array if no data is found
+
+    }
+    catch (error) {
+      console.error('Error while Fetching answeered question:', error.message);
+      throw error;
+    }
+ 
+
+    } 
+
+
+
 }

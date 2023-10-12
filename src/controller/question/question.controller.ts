@@ -31,7 +31,11 @@ export class QuestionController {
   findAll() {
     return this.questionService.findAll();
   }
-
+  @Get('/answered')
+  findClosedCall() {
+    console.log("AnsweredQuestion")
+    return this.questionService.findClosedQuestion();
+  }
   @Get('/unAnswered')
   unAnsweredQUestions() {
     return this.questionService.unAnsweredQuestions();
@@ -73,8 +77,5 @@ closeCall(
   findInProgresschats(@Param('id') id: string) {
     return this.questionService.findInProgressChat(id);
   }
-  @Get('AnsweredQuestion')
-  findClosedCall() {
-    return this.questionService.findClosedQuestion();
-  }
+
 }
