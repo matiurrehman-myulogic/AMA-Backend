@@ -73,7 +73,7 @@ closeCall(
   findInProgresschats(@Param('id') id: string) {
     return this.questionService.findInProgressChat(id);
   }
-  @Get()
+  @Get('AnsweredQuestion')
   findClosedCall() {
     return this.questionService.findClosedQuestion();
   }

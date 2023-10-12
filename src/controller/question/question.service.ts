@@ -223,7 +223,7 @@ async findClosedQuestion() {
     },
     {
       $sort: {
-        "createdAt": -1 // Sort by "createdAt" in descending order
+        "createdAt": -1
       }
     }
   ]);
