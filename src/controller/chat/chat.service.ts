@@ -129,19 +129,18 @@ export class ChatService {
     // const chatDetail = await this.ChatModel.findOne({
     //   roomId: objectId,
     // });
-
-    const userToNotifyId =
-      new mongoose.Types.ObjectId(updateChatDto.senderId) ===
+const id= new mongoose.Types.ObjectId(updateChatDto.senderId)
+    const userToNotifyId =id ===
       updatedDocument.answererId
         ? updatedDocument.questionerId
         : updatedDocument.answererId;
     const userDetail = await this.AuthModel.findOne({
       _id: userToNotifyId,
     });
-    const title = 'New notification';
+    const title = 'Response from your Active Chat';
     const message = `You got a new chat response `;
-
-    await this.firebaseApp.sendPushNotification(userDetail.FCM, title, message);
+console.log("notifcationnnnn",userToNotifyId)
+    await this.firebaseApp.sendPushNotification(userDetail.FCM, title, updateChatDto.message);
     console.log('updateddd', updatedDocument);
     return updatedDocument;
   }

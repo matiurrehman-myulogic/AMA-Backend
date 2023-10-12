@@ -100,28 +100,28 @@ export class QuestionService {
       //   })
         
       //   .exec();
-      const nearQuestions = await this.QuestionModel.find({
-        'location.coordinates': {
-          $near: {
-            $geometry: {
-              type: 'Point',
-              coordinates: [12.9716, 77.5946],
-            },
-            $maxDistance: 500, // in meters
-          },
-        },
-        status: User_Status.OPEN,
-      }).exec();
-      
-      const questionsWithoutCoordinates = await this.QuestionModel.find({
-        'location.coordinates': { $exists: false },
-        status: User_Status.OPEN,
-      }).exec();
+// const nearQuestions = await this.QuestionModel.find({
+//   'location.coordinates': {
+//     $near: {
+//       $geometry: {
+//         type: 'Point',
+//         coordinates: [12.9716, 77.5946],
+//       },
+//       $maxDistance: 500, // in meters
+//     },
+//   },
+//   status: User_Status.OPEN,
+// }).exec();
+// return questions;
+//       const questionsWithoutCoordinates = await this.QuestionModel.find({
+//         'location.coordinates': { $exists: false },
+//         status: User_Status.OPEN,
+//       }).exec();
       
       // Combine the results
-      const questions = nearQuestions.concat(questionsWithoutCoordinates);
-        return questions
-      if (questions) {
+      // const questions = nearQuestions.concat(questionsWithoutCoordinates);
+        // return questions
+      if (user) {
         const filteredData = await Promise.all(
           user.map(async (item: any) => {
             const id = item.userId;
@@ -206,4 +206,28 @@ export class QuestionService {
    
 }
 
+async findClosedQuestion() {
+
+  // const questionDetails = await this.ch.findOne({
+  //   _id: objectId,
+  // });
+  // console.log('ussseerr', questionDetails);
+  // return questionDetails;
+  const data=await this.QuestionModel.aggregate([
+    {
+      $match: {
+    
+        "answer": { $exists: true },
+        "status": "CLOSE" 
+      }
+    },
+    {
+      $sort: {
+        "createdAt": -1 // Sort by "createdAt" in descending order
+      }
+    }
+  ]);
+  return data
+
+}
 }

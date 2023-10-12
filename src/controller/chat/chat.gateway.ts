@@ -24,7 +24,15 @@ export class ChatGateway implements OnGatewayInit {
     client.leave(roomName);
     console.log(`User left room ${roomName}`);
   }
+  @SubscribeMessage('handleCl')
+  handleCl(client: Socket): void {
+    // Handle room-specific chat messages here
+    // You can broadcast this message to the corresponding room
+    console.log("closecallll");
+    this.server.emit('chatMessage');
 
+  
+  }
   @SubscribeMessage('chatMessage') // Handle global chat messages
   handleChatMessage(client: Socket, message: any): void {
     // Handle global chat messages here (if needed)
@@ -37,15 +45,31 @@ export class ChatGateway implements OnGatewayInit {
     const { selectedQuestionsRoomId, message } = payload;
     // Handle room-specific chat messages here
     // You can broadcast this message to the corresponding room
-    console.log("message:", message);
+    console.log("mmmmmmmessage:", message);
     console.log("roomID:", selectedQuestionsRoomId);
 
     this.server.to(selectedQuestionsRoomId).emit(`chatMessage_${selectedQuestionsRoomId}`, message);
   }
-  @SubscribeMessage('closeCall') // Custom event for closing a call
-  handleCloseCall(client: Socket, payload: { selectedQuestionsRoomId: string, message: any }): void {
-    const { selectedQuestionsRoomId, message } = payload;
-    const alertMessage = "The other person has closed the call.";
-    this.server.to(selectedQuestionsRoomId).emit(`closeCall_${selectedQuestionsRoomId}`, alertMessage);  }
+//   @SubscribeMessage('closeCall') // Custom event for closing a call
+//   handleCloseCall(client: Socket): void {
+// console.log("end callllllllllllllllllllllllllllllll")
+//     // const { selectedQuestionsRoomId, message } = payload;
+//     // const alertMessage = "The other person has closed the call.";
+//     // this.server.to(selectedQuestionsRoomId).emit(`closeCall_${selectedQuestionsRoomId}`, alertMessage);
+
+
+// }
+
+@SubscribeMessage('closeCall')
+handleCloseCall(client: Socket,payload: { selectedQuestionsRoomId: string, message: any }): void {
+  // Handle room-specific chat messages here
+  // You can broadcast this message to the corresponding room
+ const { selectedQuestionsRoomId, message } = payload;
+ const alertMessage = "The other person has closed the call.";
+
+  console.log("closeca1233478988");
+     this.server.to(selectedQuestionsRoomId).emit(`closeCall_${selectedQuestionsRoomId}`, alertMessage);
+
+}
 }
 
