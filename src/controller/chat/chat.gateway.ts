@@ -4,7 +4,7 @@ import { SubscribeMessage, WebSocketGateway, WebSocketServer, OnGatewayInit } fr
 import mongoose from 'mongoose';
 import { Server,Socket } from 'socket.io';
 import { Chat, ChatDocument } from 'src/schema/chat.schema';
-const userToSocketMap = new Map();
+
 @WebSocketGateway({ namespace: '/chat' })
 export class ChatGateway implements OnGatewayInit {
     @InjectModel(Chat.name)
@@ -19,7 +19,7 @@ export class ChatGateway implements OnGatewayInit {
   handleJoinRoom(client: Socket, roomName: string,userId:string): void {
     // Join the specified room
     client.join(roomName);
-    // userToSocketMap.set(userId,client.id);
+
 
     console.log(`User joined room ${roomName}`);
   }
@@ -28,7 +28,7 @@ export class ChatGateway implements OnGatewayInit {
   handleLeaveRoom(client: Socket, roomName: string): void {
     // Leave the specified room
     client.leave(roomName);
-    // userToSocketMap.delete(userId);
+
 
     console.log(`User left room ${roomName}`);
   }
@@ -80,14 +80,6 @@ handleCloseCall(client: Socket,payload: { selectedQuestionsRoomId: string, messa
 
 }
 
- findSocketIdByUserId(userId: string): string | undefined {
 
-    for (const [socketId, storedUserId] of userToSocketMap.entries()) {
-      if (storedUserId === userId) {
-        return socketId;
-      }
-    }
-    return undefined; // User not found
-  }
 }
 

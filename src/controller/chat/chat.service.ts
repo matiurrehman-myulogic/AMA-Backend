@@ -129,23 +129,10 @@ export class ChatService {
     const Chatroom = await this.ChatModel.findOne({
       roomId: objectId,
     });
-    const questionerSocketId = this.chatGateway.findSocketIdByUserId(Chatroom.questionerId.toString())
-    const answererSocketId = this.chatGateway.findSocketIdByUserId(Chatroom.answererId.toString())
 
 
 
-
-    if(questionerSocketId && answererSocketId)
-    {
-updatedDocument = await this.ChatModel.findOneAndUpdate(
-        { roomId: objectId },
-        {
-          $push: { messages: { ...updateChatDto, createdAt: Date.now() } }
-        },
-        { new: true },
-      );
-    }
-    else if (userId ===Chatroom.questionerId) {
+     if (userId ===Chatroom.questionerId) {
        updatedDocument = await this.ChatModel.findOneAndUpdate(
         { roomId: objectId },
         {
