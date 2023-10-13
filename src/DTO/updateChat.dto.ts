@@ -1,6 +1,7 @@
 
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsOptional } from 'class-validator';
+import { Message_Status } from 'src/constants/MessageStatus';
 import { Message_Type } from 'src/constants/messageType.constants';
 import { User_Status } from 'src/constants/user.constants';
 import { Message } from 'src/schema/common/Message.schema';
@@ -28,6 +29,16 @@ export class UpdateChatDto {
     example: "TEXT",
   })
   messageType: Message_Type;
+
+  @IsOptional()
+  @ApiProperty({
+    type:String,
+    enum:Object.keys(Message_Status),
+  })
+  status: Message_Status;
+
+
+
 
  @IsOptional()
   @ApiProperty({

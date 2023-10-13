@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Req
 } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import * as mongoose from 'mongoose';
@@ -41,37 +42,32 @@ export class ChatController {
     return this.chatService.findChatroom(id);
   }
 
-
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT')
   @Patch(':id')
   updafindChatroom(
+    @Req() req: any,
     @Param('id') id: string,
     @Body() updateChatDto: UpdateChatDto,
   ) {
-    //     const updatedChat = await this.chatService.updateChatMessage(updateChatDto, id);
-
-    // // Send a WebSocket message to inform clients about the updated chat message
-    // this.chatGateway.server.emit('chatMessage', updatedChat);
-
-    // return updatedChat;
-
-    // return this.chatService.updateChatMessage(updateChatDto,id);
-
-    return this.chatService.updateChatMessage(updateChatDto, id);
+    return this.chatService.updateChatMessage(req.payload.id,updateChatDto, id);
   }
 
-
   @Get('getInprogressChat/:id')
-
   findActiveChatroom(@Param('id') id: string) {
     return this.chatService.findInProgressChatroom(id);
   }
   @Get('GetResponseToQuestion/:id')
-
   addResponseToQuestion(@Param('id') id: string) {
     return this.chatService.addResponseToQuestion(id);
   }
+  @Patch('ResetSeenCount/:roomId')
+  AddResponse (
+    @Param('roomId') id: string,
+    @Req() req: any,
 
-
+  ) {
+    return this.chatService.ResetSeenCount(req.payload.id,id);
+  
+  }
 }

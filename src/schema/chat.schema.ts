@@ -21,6 +21,12 @@ answererId: Types.ObjectId;
 
 @Prop({ type: Array })
 messages: Message[];
+@Prop()
+answerer_unseenCount:number;
+
+@Prop()
+questioner_unseenCount:number;
+
 }
 export type ChatDocument=Chat & Document
 
