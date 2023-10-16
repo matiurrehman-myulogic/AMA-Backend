@@ -61,3 +61,4 @@ export type QuentionDocument = Question & Document;
 export const QuestionSchema = SchemaFactory.createForClass(Question);
 
 
+QuestionSchema.index({ 'location.coordinates': '2dsphere' });

@@ -81,42 +81,101 @@ export class ChatService {
   //   return userDetail;
   // }
   async findChatroom(id: string) {
-    try {
-      const objectId = new mongoose.Types.ObjectId(id);
+          const roomId = new mongoose.Types.ObjectId(id);
 
-      const userDetail = await this.ChatModel.findOne({
-        roomId: objectId,
-      });
+    // try {
 
-      console.log(userDetail.questionerId);
-      console.log(userDetail.answererId);
-      const questionerId = new mongoose.Types.ObjectId(userDetail.questionerId);
-      const answererId = new mongoose.Types.ObjectId(userDetail.answererId);
 
-      const answererDetail = await this.AuthModel.findById(answererId);
-      const questionerDetail = await this.AuthModel.findById(questionerId);
 
-      const questionDetail = await this.QuestinModel.findOne({
-        _id: objectId,
-      });
 
-      if (!userDetail && !questionDetail) {
-        console.log('Both userDetail and questionDetail not found.');
-      }
 
-      console.log('userDetail', userDetail);
-      console.log('questionDetail', questionDetail);
-      const result = await this.ChatModel.aggregate(pipeline);
-      console.log('pipelin', result);
-      return {
-        userDetail,
-        question: questionDetail?.question,
-        answererDetail,
-        questionerDetail,
-      };
-    } catch (error) {
-      console.error('Error in findChatroom:', error);
-    }
+    //   const objectId = new mongoose.Types.ObjectId(id);
+
+    //   const userDetail = await this.ChatModel.findOne({
+    //     roomId: objectId,
+    //   });
+
+    //   console.log(userDetail.questionerId);
+    //   console.log(userDetail.answererId);
+    //   const questionerId = new mongoose.Types.ObjectId(userDetail.questionerId);
+    //   const answererId = new mongoose.Types.ObjectId(userDetail.answererId);
+
+    //   const answererDetail = await this.AuthModel.findById(answererId);
+    //   const questionerDetail = await this.AuthModel.findById(questionerId);
+
+    //   const questionDetail = await this.QuestinModel.findOne({
+    //     _id: objectId,
+    //   });
+
+    //   if (!userDetail && !questionDetail) {
+    //     console.log('Both userDetail and questionDetail not found.');
+    //   }
+
+    //   console.log('userDetail', userDetail);
+    //   console.log('questionDetail', questionDetail);
+    //   const result = await this.ChatModel.aggregate(pipeline);
+    //   console.log('pipelin', result);
+    //   return {
+    //     userDetail,
+    //     question: questionDetail?.question,
+    //     answererDetail,
+    //     questionerDetail,
+    //   };
+    // } catch (error) {
+    //   console.error('Error in findChatroom:', error);
+    // }
+    const data = await this.ChatModel.aggregate([
+      {
+        $match: {
+         roomId:roomId
+        },
+      },
+      {
+        $lookup: {
+          from: 'questions', // Replace with the actual name of your questions collection
+          localField: 'roomId',
+          foreignField: '_id',
+          as: 'question',
+        },
+      },
+      {
+        $unwind: '$question',
+      },
+   
+      {
+        $lookup: {
+          from: 'auths', // Replace with the actual name of your authmodel collection
+          localField: 'questionerId',
+          foreignField: '_id',
+          as: 'questioner',
+        },
+      },
+      {
+        $lookup: {
+          from: 'auths', // Replace with the actual name of your authmodel collection
+          localField: 'answererId',
+          foreignField: '_id',
+          as: 'answerer',
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          roomId: 1,
+          questionerId: 1,
+          answererId: 1,
+          messages: 1,
+          'question.status': 1,
+          'question.pic': 1,
+          'question.question': 1,
+          questioner_unseenCount: 1,
+          answerer_unseenCount: 1,
+          questioner_name: { $arrayElemAt: ['$questioner.FullName', 0] }, // Extract name for questioner
+          answerer_name: { $arrayElemAt: ['$answerer.FullName', 0] }, // Extract name for answerer
+        },
+      },
+    ]);
+    return data
   }
   findOne(id: number) {
     return `This action returns a #${id} chat`;
@@ -185,6 +244,51 @@ export class ChatService {
 
   async findInProgressChatroom(id: string) {
     const userId = new mongoose.Types.ObjectId(id);
+ 
+    // const data = await this.ChatModel.aggregate([
+    //   {
+    //     $match: {
+    //       $or: [{ questionerId: userId }, { answererId: userId }],
+    //     },
+    //   },
+    //   {
+    //     $lookup: {
+    //       from: 'questions', // Replace with the actual name of your questions collection
+    //       localField: 'roomId',
+    //       foreignField: '_id',
+    //       as: 'question',
+    //     },
+    //   },
+    //   {
+    //     $unwind: '$question', // Unwind the resulting array from the $lookup stage
+    //   },
+    //   {
+    //     $match: {
+    //       'question.status': 'INPROGRESS',
+    //     },
+    //   },
+    //   {
+    //     $project: {
+    //       _id: 1, // Include the "_id" field
+    //       roomId: 1, // Include the "roomId" field
+    //       questionerId: 1, // Include the "questioner" field
+    //       answererId: 1, // Include the "answerer" field
+    //       messages: 1, // Include the "text" field from the embedded "question" document
+    //       'question.status': 1,
+    //       'question.pic': 1,
+    //       'question.question': 1,
+    //       questioner_unseenCount:1,
+    //       answerer_unseenCount:1
+
+    //     },
+    //   },
+    // ]);
+
+    // console.log('inprogress chat', data);
+    // return data;
+
+
+
     const data = await this.ChatModel.aggregate([
       {
         $match: {
@@ -200,7 +304,7 @@ export class ChatService {
         },
       },
       {
-        $unwind: '$question', // Unwind the resulting array from the $lookup stage
+        $unwind: '$question',
       },
       {
         $match: {
@@ -208,19 +312,39 @@ export class ChatService {
         },
       },
       {
+        $lookup: {
+          from: 'auths', // Replace with the actual name of your authmodel collection
+          localField: 'questionerId',
+          foreignField: '_id',
+          as: 'questioner',
+        },
+      },
+      {
+        $lookup: {
+          from: 'auths', // Replace with the actual name of your authmodel collection
+          localField: 'answererId',
+          foreignField: '_id',
+          as: 'answerer',
+        },
+      },
+      {
         $project: {
-          _id: 1, // Include the "_id" field
-          roomId: 1, // Include the "roomId" field
-          questionerId: 1, // Include the "questioner" field
-          answererId: 1, // Include the "answerer" field
-          messages: 1, // Include the "text" field from the embedded "question" document
+          _id: 1,
+          roomId: 1,
+          questionerId: 1,
+          answererId: 1,
+          messages: 1,
           'question.status': 1,
           'question.pic': 1,
           'question.question': 1,
+          questioner_unseenCount: 1,
+          answerer_unseenCount: 1,
+          questioner_name: { $arrayElemAt: ['$questioner.FullName', 0] }, // Extract name for questioner
+          answerer_name: { $arrayElemAt: ['$answerer.FullName', 0] }, // Extract name for answerer
         },
       },
     ]);
-
+  
     console.log('inprogress chat', data);
     return data;
   }
@@ -248,6 +372,7 @@ export class ChatService {
   }
 
   async ResetSeenCount(userId,roomId: string) {
+    console.log("resetttttt",userId,roomId)
     const objectId = new mongoose.Types.ObjectId(roomId);
     let updatedDocument: ChatDocument | null;
 
@@ -260,7 +385,9 @@ export class ChatService {
   const Chatroom = await this.ChatModel.findOne({
     roomId: objectId,
   });
-  if (userId ===Chatroom.questionerId) {
+  console.log("userid",userId,Chatroom.questionerId)
+  if (userId.toString() ==Chatroom.questionerId.toString() ) {
+    console.log("i am a qiestioner")
      updatedDocument = await this.ChatModel.findOneAndUpdate(
       { roomId: objectId },
       {
@@ -269,7 +396,9 @@ export class ChatService {
       },
       { new: true },
     );
-  } else {
+  } else if(userId.toString()  ==Chatroom.answererId.toString() ){
+    console.log("i am a answerer")
+
      updatedDocument = await this.ChatModel.findOneAndUpdate(
       { roomId: objectId },
       {
@@ -281,7 +410,7 @@ export class ChatService {
   }
 
 
-
+return updatedDocument;
 
 
 

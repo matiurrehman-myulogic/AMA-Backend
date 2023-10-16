@@ -2,7 +2,11 @@ import { Injectable } from '@nestjs/common';
 
 import { UpdateQuestionDto } from './dto/update-question.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Question, QuentionDocument, QuestionSchema } from 'src/schema/question.schema';
+import {
+  Question,
+  QuentionDocument,
+  QuestionSchema,
+} from 'src/schema/question.schema';
 
 import * as mongoose from 'mongoose';
 import { Auth, AuthDocument } from 'src/schema/auth.schema';
@@ -48,7 +52,7 @@ export class QuestionService {
   async findAll() {
     try {
       const user = await this.QuestionModel.find();
-      console.log("ghghghghg",user);
+      console.log('ghghghghg', user);
 
       if (user) {
         const filteredData = await Promise.all(
@@ -78,13 +82,13 @@ export class QuestionService {
       throw error;
     }
   }
-  async unAnsweredQuestions() {
+  async unAnsweredQuestions(id: string) {
     try {
       const user = await this.QuestionModel.find({ status: User_Status.OPEN });
       // console.log("ll44ll",user);
       const indexes = await this.QuestionModel.collection.getIndexes();
-      console.log("indexxxesss",indexes);
-      
+      console.log('indexxxesss', indexes);
+
       // const questions = await this.QuestionModel
       //   .find({
       //     'location.coordinates': {
@@ -98,32 +102,37 @@ export class QuestionService {
       //     },
       //     status: User_Status.OPEN, // Add the condition for status
       //   })
-        
+
       //   .exec();
-// const nearQuestions = await this.QuestionModel.find({
-//   'location.coordinates': {
-//     $near: {
-//       $geometry: {
-//         type: 'Point',
-//         coordinates: [12.9716, 77.5946],
-//       },
-//       $maxDistance: 500, // in meters
-//     },
-//   },
-//   status: User_Status.OPEN,
-// }).exec();
-// return questions;
-//       const questionsWithoutCoordinates = await this.QuestionModel.find({
-//         'location.coordinates': { $exists: false },
-//         status: User_Status.OPEN,
-//       }).exec();
-      
-      // Combine the results
-      // const questions = nearQuestions.concat(questionsWithoutCoordinates);
-        // return questions
-      if (user) {
+      const nearQuestions = await this.QuestionModel.find({
+        'location.coordinates': {
+          $near: {
+            $geometry: {
+              type: 'Point',
+              coordinates: [12.9716, 77.5946],
+            },
+            $maxDistance: 500, // in meters
+          },
+        },
+        status: User_Status.OPEN,
+        userId: { $ne: id },
+      }).exec();
+      // return questions;
+      console.log('Near Questions:', nearQuestions);
+
+      const questionsWithoutCoordinates = await this.QuestionModel.find({
+        'location.coordinates': { $exists: false },
+        status: User_Status.OPEN,
+        userId: { $ne: id },
+      }).exec();
+
+      console.log('questions without cordinates', questionsWithoutCoordinates);
+      const questions = nearQuestions.concat(questionsWithoutCoordinates);
+      // return questions
+      console.log('final question ', questions);
+      if (questions) {
         const filteredData = await Promise.all(
-          user.map(async (item: any) => {
+          questions.map(async (item: any) => {
             const id = item.userId;
             const userPresent = await this.UserModel.findOne({ _id: id });
             console.log('userrrffffff', userPresent);
@@ -183,52 +192,62 @@ export class QuestionService {
       { status: User_Status.CLOSE },
       { new: true },
     );
+    const userPointIncrement = await this.UserModel.findByIdAndUpdate(
+      question.answererId,
+      {
+        $inc: { Points: 1 },
+      },
+      { new: true },
+    );
   }
-  async AddResponse(id: string,addReponseDTO:addReponseDTO) {
-
+  async AddResponse(id: string, addReponseDTO: addReponseDTO) {
     const objectId = new mongoose.Types.ObjectId(id);
 
-    console.log('reuuuuuus',addReponseDTO,id)
+    console.log('reuuuuuus', addReponseDTO, id);
     const question = await this.QuestionModel.findByIdAndUpdate(
       objectId,
       { answer: addReponseDTO.answer },
       { new: true },
     );
+
+    const userPointIncrement = await this.UserModel.findByIdAndUpdate(
+      question.answererId,
+      {
+        $inc: { Points: 1 },
+      },
+      { new: true },
+    );
   }
   async findInProgressChat(id: string) {
-
     const objectId = new mongoose.Types.ObjectId(id);
     // const questionDetails = await this.ch.findOne({
     //   _id: objectId,
     // });
     // console.log('ussseerr', questionDetails);
     // return questionDetails;
-   
-}
+  }
 
-async findClosedQuestion() {
+  async findClosedQuestion() {
+    // const questionDetails = await this.ch.findOne({
+    //   _id: objectId,
+    // });
+    // console.log('ussseerr', questionDetails);
 
-  // const questionDetails = await this.ch.findOne({
-  //   _id: objectId,
-  // });
-  // console.log('ussseerr', questionDetails);
-
-
-  try{ const data=await this.QuestionModel.aggregate([
-    {
-      $match: {
-    
-        "answer": { $exists: true },
-        "status": "CLOSE" 
-      }
-    },
-    {
-      $sort: {
-        "createdAt": -1
-      }
-    }
-  ]);
-  if (data) {
+    try {
+      const data = await this.QuestionModel.aggregate([
+        {
+          $match: {
+            answer: { $exists: true },
+            status: 'CLOSE',
+          },
+        },
+        {
+          $sort: {
+            createdAt: -1,
+          },
+        },
+      ]);
+      if (data) {
         const filteredData = await Promise.all(
           data.map(async (item: any) => {
             const id = item.userId;
@@ -249,16 +268,9 @@ async findClosedQuestion() {
         return filteredData;
       }
       return []; // Return an empty array if no data is found
-
-    }
-    catch (error) {
+    } catch (error) {
       console.error('Error while Fetching answeered question:', error.message);
       throw error;
     }
- 
-
-    } 
-
-
-
+  }
 }

@@ -37,8 +37,8 @@ export class QuestionController {
     return this.questionService.findClosedQuestion();
   }
   @Get('/unAnswered')
-  unAnsweredQUestions() {
-    return this.questionService.unAnsweredQuestions();
+  unAnsweredQUestions(  @Req() req: any) {
+    return this.questionService.unAnsweredQuestions(req.payload.id);
   }
 
   @Get(':id')
