@@ -6,7 +6,7 @@ import { Chat, ChatDocument } from 'src/schema/chat.schema';
 import * as mongoose from 'mongoose';
 import { CreateChatDto } from 'src/DTO/create-chat.dot';
 import { FindChatDto } from 'src/DTO/findchat-dto';
-import { UpdateChatDto } from 'src/DTO/updateChat.dto';
+
 import { QuentionDocument, Question } from 'src/schema/question.schema';
 import { User_Status } from 'src/constants';
 import { FirebaseApp } from 'src/database/firebase-app';
@@ -14,6 +14,8 @@ import { Auth, AuthDocument } from 'src/schema/auth.schema';
 import { pipeline } from 'src/Pipeline/chat-pipeline';
 import { ChatModule } from './chat.module';
 import { ChatGateway } from './chat.gateway';
+import { UpdateChatDto } from 'src/DTO/updateChat.dto';
+
 
 @Injectable()
 export class ChatService {
@@ -183,6 +185,7 @@ export class ChatService {
 
   async updateChatMessage(userId, updateChatDto: UpdateChatDto, roomId: any) {
     const objectId = new mongoose.Types.ObjectId(roomId);
+    const user = new mongoose.Types.ObjectId(userId);
     let updatedDocument: ChatDocument | null;
 
     const Chatroom = await this.ChatModel.findOne({
@@ -191,26 +194,42 @@ export class ChatService {
 
 
 
-     if (userId ===Chatroom.questionerId) {
-       updatedDocument = await this.ChatModel.findOneAndUpdate(
-        { roomId: objectId },
-        {
-          $push: { messages: { ...updateChatDto, createdAt: Date.now() } },
-          $inc: { answerer_unseenCount: 1 }, 
-        },
-        { new: true },
-      );
-    } else {
-       updatedDocument = await this.ChatModel.findOneAndUpdate(
-        { roomId: objectId },
-        {
-          $push: { messages: { ...updateChatDto, createdAt: Date.now() } },
-          $inc: {questioner_unseenCount : 1 }, 
-        },
-        { new: true },
-      );
-    }
+    //  if (userId ===Chatroom.questionerId) {
+    //    updatedDocument = await this.ChatModel.findOneAndUpdate(
+    //     { roomId: objectId },
+    //     {
+    //       $push: { messages: { ...updateChatDto, createdAt: Date.now() } },
+    //       $inc: { answerer_unseenCount: 1 }, 
+    //     },
+    //     { new: true },
+    //   );
+    // } else {
+    //    updatedDocument = await this.ChatModel.findOneAndUpdate(
+    //     { roomId: objectId },
+    //     {
+    //       $push: { messages: { ...updateChatDto, createdAt: Date.now() } },
+    //       $inc: {questioner_unseenCount : 1 }, 
+    //     },
+    //     { new: true },
+    //   );
+    // }
+    console.log(user, Chatroom.questionerId)
+    const countField = user.toString() === Chatroom.questionerId.toString() ? "answerer_unseenCount" : "questioner_unseenCount";
+    const incrementValue = updateChatDto.Online ? 0 : 1;
+    console.log("ggg",countField,incrementValue)
+console.log("checkkkk updatechtdto",updateChatDto)
+const { Online, ...updateChatDtoWithoutOnline } = updateChatDto;
 
+
+console.log("finallllllll",updateChatDtoWithoutOnline)
+    updatedDocument = await this.ChatModel.findOneAndUpdate(
+      { roomId: objectId },
+      {
+        $push: { messages: { ...updateChatDtoWithoutOnline, createdAt: Date.now() } },
+        $inc: { [countField]: incrementValue },
+      },
+      { new: true },
+    );
     // const updatedDocument = await this.ChatModel.findOneAndUpdate(
     //   { roomId: objectId },
     //   { $push: { messages: { ...updateChatDto, createdAt: Date.now() } } }, // Use $push to add a new element to the messages array
@@ -234,7 +253,6 @@ export class ChatService {
       title,
       updateChatDto.message,
     );
-    console.log('updateddd', updatedDocument);
     return updatedDocument;
   }
 

@@ -273,4 +273,21 @@ export class QuestionService {
       throw error;
     }
   }
+
+  async searchQuery(query: string) {
+    const data = await this.QuestionModel.aggregate([
+      {
+        $search: {
+          index: 'searchQuestions',
+          text: {
+            query,
+            path: {
+              wildcard: '*',
+            },
+          },
+        },
+      },
+    ]);
+    return data
+  }
 }
