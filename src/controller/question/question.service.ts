@@ -84,26 +84,10 @@ export class QuestionService {
   }
   async unAnsweredQuestions(id: string) {
     try {
-      const user = await this.QuestionModel.find({ status: User_Status.OPEN });
       // console.log("ll44ll",user);
       const indexes = await this.QuestionModel.collection.getIndexes();
       console.log('indexxxesss', indexes);
 
-      // const questions = await this.QuestionModel
-      //   .find({
-      //     'location.coordinates': {
-      //       $near: {
-      //         $geometry: {
-      //           type: 'Point',
-      //           coordinates:[12.9716,77.5946],
-      //         },
-      //         $maxDistance:500, // in meters
-      //       },
-      //     },
-      //     status: User_Status.OPEN, // Add the condition for status
-      //   })
-
-      //   .exec();
       const nearQuestions = await this.QuestionModel.find({
         'location.coordinates': {
           $near: {
@@ -114,10 +98,10 @@ export class QuestionService {
             $maxDistance: 500, // in meters
           },
         },
-        status: User_Status.OPEN,
-        userId: { $ne: id },
-      }).exec();
-      // return questions;
+        status: User_Status.OPEN, // Add the condition for status
+      })
+      .exec();
+
       console.log('Near Questions:', nearQuestions);
 
       const questionsWithoutCoordinates = await this.QuestionModel.find({
@@ -126,9 +110,7 @@ export class QuestionService {
         userId: { $ne: id },
       }).exec();
 
-      console.log('questions without cordinates', questionsWithoutCoordinates);
       const questions = nearQuestions.concat(questionsWithoutCoordinates);
-      // return questions
       console.log('final question ', questions);
       if (questions) {
         const filteredData = await Promise.all(
@@ -275,6 +257,21 @@ export class QuestionService {
   }
 
   async searchQuery(query: string) {
+    // const data = await this.QuestionModel.aggregate([
+    //   {
+    //     $search: {
+    //       index: 'searchQuestions',
+    //       text: {
+    //         query,
+    //         path: {
+    //           wildcard: '*',
+    //         },
+    //       },
+    //     },
+    //   },
+    // ]);
+    // return data
+
     const data = await this.QuestionModel.aggregate([
       {
         $search: {
@@ -287,7 +284,196 @@ export class QuestionService {
           },
         },
       },
+      {
+        $match: {
+          answer: { $exists: true },
+          status: 'CLOSE',
+        },
+      },
+      {
+        $sort: {
+          createdAt: -1,
+        },
+      },
     ]);
-    return data
+
+    try {
+      if (data) {
+        const filteredData = await Promise.all(
+          data.map(async (item: any) => {
+            const id = item.userId;
+            const userPresent = await this.UserModel.findOne({ _id: id });
+            console.log('userrrffffff', userPresent);
+
+            return {
+              ProfilePic: userPresent.ProfilePic,
+              FullName: userPresent.FullName,
+              question: {
+                ...item,
+              },
+            };
+          }),
+        );
+
+        console.log('filtered', filteredData);
+        return filteredData;
+      }
+      return []; // Return an empty array if no data is found
+    } catch (error) {
+      console.error('Error while Fetching answeered question:', error.message);
+      throw error;
+    }
+  }
+  async searchQueryUnanswered(query: string, id: string) {
+    const questionsWithoutCoordinatesResults =
+      await this.QuestionModel.aggregate([
+        {
+          $match: {
+            'location.coordinates': { $exists: false },
+            status: User_Status.OPEN,
+            userId: { $ne: id },
+          },
+        },
+        {
+          $project: {
+            _id: 1,
+          },
+        },
+      ]);
+
+    // Extract the document IDs from the 'questionsWithoutCoordinates' results
+    const documentIdsWithoutCoordinates =
+      questionsWithoutCoordinatesResults.map((result) => result._id);
+
+    const geospatialResults = await this.QuestionModel.aggregate([
+      {
+        $geoNear: {
+          near: {
+            type: 'Point',
+            coordinates: [12.9716, 77.5946],
+          },
+          distanceField: 'distance',
+          maxDistance: 500, // in meters
+          spherical: true, // For 2dsphere index
+        },
+      },
+      {
+        $match: {
+          status: User_Status.OPEN, // Add the condition for status
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+        },
+      },
+    ]);
+    console.log('ddddd', documentIdsWithoutCoordinates);
+    // Extract the document IDs from the geospatial results
+    const documentIds = geospatialResults.map((result) => result._id);
+    const searchIds = documentIds.concat(documentIdsWithoutCoordinates);
+    // Step 2: Perform the text search based on the extracted document IDs
+    console.log('Searcj i', searchIds);
+    const textSearchResults = await this.QuestionModel.aggregate([
+      {
+        $search: {
+          index: 'searchQuestions',
+          text: {
+            query,
+            path: {
+              wildcard: '*',
+            },
+            fuzzy: { maxEdits: 2, prefixLength: 3, maxExpansions: 256 },
+          },
+        },
+      },
+      {
+        $match: {
+          _id: { $in: searchIds },
+        },
+      },
+      {
+        $sort: {
+          createdAt: -1, // Sort in descending order based on the 'createdAt' field
+        },
+      },
+    ]);
+
+    // Return the combined results
+    return textSearchResults;
+    // const data = await this.QuestionModel.aggregate([
+    //   {
+    //     $search: {
+    //       index: 'searchQuestions',
+    //       text: {
+    //         query,
+    //         path: {
+    //           wildcard: '*',
+    //         },
+    //       },
+    //     },
+    //   },
+    //   {
+    //     $geoNear: {
+    //       near: {
+    //         type: 'Point',
+    //         coordinates: [12.9716, 77.5946],
+    //       },
+    //       distanceField: 'distance',
+    //       maxDistance: 500, // in meters
+    //       spherical: true, // For 2dsphere index
+    //     },
+    //   },
+
+    //   {
+    //     $match: {
+    //       status: User_Status.OPEN, // Add the condition for status
+    //     },
+    //   },
+
+    // ]);
+
+    // const questionsWithoutCoordinates = await this.QuestionModel.aggregate([
+    //   {
+    //     $search: {
+    //       index: 'searchQuestions',
+    //       text: {
+    //         query,
+    //         path: {
+    //           wildcard: '*',
+    //         },
+    //       },
+    //     },
+    //   },
+    //   {
+    //     $match: {
+    //       'location.coordinates': { $exists: false },
+    //       status: User_Status.OPEN,
+    //       userId: { $ne: id },
+    //     },
+    //   },
+    // ]);
+
+    // const questions = nearQuestions.concat(questionsWithoutCoordinates);
+    // if (questions) {
+    //   const filteredData = await Promise.all(
+    //     questions.map(async (item: any) => {
+    //       const id = item.userId;
+    //       const userPresent = await this.UserModel.findOne({ _id: id });
+    //       console.log('userrrffffff', userPresent);
+
+    //       return {
+    //         ProfilePic: userPresent.ProfilePic,
+    //         FullName: userPresent.FullName,
+    //         question: {
+    //           ...item._doc,
+    //         },
+    //       };
+    //     }),
+    //   );
+
+    //   console.log('filtered', filteredData);
+    //   return filteredData;
+    // }
   }
 }

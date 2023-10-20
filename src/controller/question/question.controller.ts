@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req, UseGuards, MiddlewareConsumer } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req, UseGuards, MiddlewareConsumer, Query} from '@nestjs/common';
 import { QuestionService } from './question.service';
 
 import { UpdateQuestionDto } from './dto/update-question.dto';
@@ -37,7 +37,7 @@ export class QuestionController {
     return this.questionService.findClosedQuestion();
   }
   @Get('/unAnswered')
-  unAnsweredQUestions(  @Req() req: any) {
+  unAnsweredQUestions(  @Req() req: any, @Query('page') page: number = 1,@Query('limit') limit: number = 10) {
     return this.questionService.unAnsweredQuestions(req.payload.id);
   }
 
@@ -77,9 +77,13 @@ closeCall(
   findInProgresschats(@Param('id') id: string) {
     return this.questionService.findInProgressChat(id);
   }
-  @Get('Search/:query')
+  @Get('SearchQueryHome/:query')
   searchQuery(@Param('query') query: string) {
     return this.questionService.searchQuery(query);
+  }
+  @Get('SearchQueryUnAnswered/:query')
+  searchQueryUnanswered(@Param('query') query: string, @Req() req: any) {
+    return this.questionService.searchQueryUnanswered(query,req.payload.id);
   }
 
 }
