@@ -7,8 +7,8 @@ import { CreateQuestionDto } from 'src/DTO/create-question.dto';
 import { AuthGuard } from 'src/AuthGuard/authGuard';
 import { UserPointsMiddleware } from './../../Middlewares/user-points.middleware';
 import { addReponseDTO } from 'src/DTO/addResponse.dto';
-@UseGuards(AuthGuard)
-@ApiBearerAuth('JWT')
+// @UseGuards(AuthGuard)
+// @ApiBearerAuth('JWT')
 @ApiTags('Question')
 @Controller('questions')
 export class QuestionController {
@@ -32,9 +32,10 @@ export class QuestionController {
     return this.questionService.findAll();
   }
   @Get('/answered')
-  findClosedCall() {
+  findClosedCall( @Query('page') page: number = 1,@Query('limit') limit: number = 10) {
+
     console.log("AnsweredQuestion")
-    return this.questionService.findClosedQuestion();
+    return this.questionService.findClosedQuestion(page,limit);
   }
   @Get('/unAnswered')
   unAnsweredQUestions(  @Req() req: any, @Query('page') page: number = 1,@Query('limit') limit: number = 10) {

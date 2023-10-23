@@ -99,6 +99,8 @@ export class QuestionService {
           },
         },
         status: User_Status.OPEN, // Add the condition for status
+        userId: { $ne: id },
+
       })
       .exec();
 
@@ -209,13 +211,15 @@ export class QuestionService {
     // return questionDetails;
   }
 
-  async findClosedQuestion() {
+  async findClosedQuestion(page:number,limit:number) {
     // const questionDetails = await this.ch.findOne({
     //   _id: objectId,
     // });
     // console.log('ussseerr', questionDetails);
-
+console.log("page and limit",page,limit)
     try {
+      const skip = (page - 1) * limit;
+
       const data = await this.QuestionModel.aggregate([
         {
           $match: {
@@ -228,7 +232,14 @@ export class QuestionService {
             createdAt: -1,
           },
         },
+        {
+          $skip: skip, // Skip records based on the page
+        },
+        {
+          $limit: limit, // Limit the number of records per page
+        },
       ]);
+      // return data
       if (data) {
         const filteredData = await Promise.all(
           data.map(async (item: any) => {
@@ -325,6 +336,10 @@ export class QuestionService {
     }
   }
   async searchQueryUnanswered(query: string, id: string) {
+
+
+
+
     const questionsWithoutCoordinatesResults =
       await this.QuestionModel.aggregate([
         {
