@@ -82,11 +82,15 @@ export class QuestionService {
       throw error;
     }
   }
-  async unAnsweredQuestions(id: string) {
+  async unAnsweredQuestions(id: string,page:number,limit:number) {
     try {
+      const skip = (page - 1) * limit;
+
       // console.log("ll44ll",user);
       const indexes = await this.QuestionModel.collection.getIndexes();
       console.log('indexxxesss', indexes);
+
+
 
       const nearQuestions = await this.QuestionModel.find({
         'location.coordinates': {
@@ -102,18 +106,24 @@ export class QuestionService {
         userId: { $ne: id },
 
       })
+      .sort({ createdAt: -1 })
+      .skip(skip) // Skip records based on the page
+      .limit(limit) // Limit the number of records per page
       .exec();
 
-      console.log('Near Questions:', nearQuestions);
 
       const questionsWithoutCoordinates = await this.QuestionModel.find({
         'location.coordinates': { $exists: false },
         status: User_Status.OPEN,
         userId: { $ne: id },
-      }).exec();
+      })
+      .sort({ createdAt:-1 })
+      .skip(skip) // Skip records based on the page
+      .limit(limit) // Limit the number of records per page
+      .exec();
 
       const questions = nearQuestions.concat(questionsWithoutCoordinates);
-      console.log('final question ', questions);
+      console.log("limit ka question",limit,page,questions)
       if (questions) {
         const filteredData = await Promise.all(
           questions.map(async (item: any) => {
@@ -131,7 +141,6 @@ export class QuestionService {
           }),
         );
 
-        console.log('filtered', filteredData);
         return filteredData;
       }
 
@@ -245,7 +254,6 @@ console.log("page and limit",page,limit)
           data.map(async (item: any) => {
             const id = item.userId;
             const userPresent = await this.UserModel.findOne({ _id: id });
-            console.log('userrrffffff', userPresent);
 
             return {
               ProfilePic: userPresent.ProfilePic,

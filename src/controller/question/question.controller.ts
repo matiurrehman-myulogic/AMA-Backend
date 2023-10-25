@@ -7,8 +7,8 @@ import { CreateQuestionDto } from 'src/DTO/create-question.dto';
 import { AuthGuard } from 'src/AuthGuard/authGuard';
 import { UserPointsMiddleware } from './../../Middlewares/user-points.middleware';
 import { addReponseDTO } from 'src/DTO/addResponse.dto';
-// @UseGuards(AuthGuard)
-// @ApiBearerAuth('JWT')
+@UseGuards(AuthGuard)
+@ApiBearerAuth('JWT')
 @ApiTags('Question')
 @Controller('questions')
 export class QuestionController {
@@ -39,7 +39,8 @@ export class QuestionController {
   }
   @Get('/unAnswered')
   unAnsweredQUestions(  @Req() req: any, @Query('page') page: number = 1,@Query('limit') limit: number = 10) {
-    return this.questionService.unAnsweredQuestions(req.payload.id);
+    console.log("pageeeeee",page,limit)
+    return this.questionService.unAnsweredQuestions(req.payload.id,page,limit);
   }
 
   @Get(':id')
