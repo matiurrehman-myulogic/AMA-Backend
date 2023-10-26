@@ -423,7 +423,27 @@ console.log("page and limit",page,limit)
     ]);
 
     // Return the combined results
-    return textSearchResults;
+    // return textSearchResults;
+
+    if (textSearchResults) {
+      const filteredData = await Promise.all(
+        textSearchResults.map(async (item: any) => {
+          const id = item.userId;
+          const userPresent = await this.UserModel.findOne({ _id: id });
+          console.log('userrrffffff', userPresent);
+
+          return {
+            ProfilePic: userPresent.ProfilePic,
+            FullName: userPresent.FullName,
+            question: {
+              ...item,
+            },
+          };
+        }),
+      );
+console.warn("wwwwww",filteredData)
+      return filteredData;
+    }
     // const data = await this.QuestionModel.aggregate([
     //   {
     //     $search: {
