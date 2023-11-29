@@ -15,6 +15,7 @@ export class AuthService {
     private AuthModel: moongose.Model<AuthDocument>,
   ) {}
   async findAll(): Promise<Auth[]> {
+    console.log("users")
     const user = await this.AuthModel.find();
     return user;
   }

@@ -8,8 +8,6 @@ const Models=[
     { name: Question.name, schema:QuestionSchema},
     { name: Auth.name, schema:AuthSchema },
     { name: Chat.name, schema:ChatSchema }
-
-     
 ]
 @Global()
 @Module({

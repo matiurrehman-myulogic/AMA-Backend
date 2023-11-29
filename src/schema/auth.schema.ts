@@ -21,6 +21,7 @@ export class Auth {
   Points:number;
   @Prop()
   FCM:string;
+
 }
 export type AuthDocument= Auth & Document
 

@@ -30,7 +30,7 @@ export class AuthGuard implements CanActivate {
     // };
 
     const token = this.extractTokenFromHeader(request);
-
+console.log("ddddd",token)
     if (token != null && token != '') {
       try {
         const decodedToken = await this.auth.verifyIdToken(
@@ -59,7 +59,7 @@ export class AuthGuard implements CanActivate {
         // console.log(error);
         // throw new UnauthorizedException(`Authorization header is required`);
         //  response.status(403)
-
+console.log(error)
         request.res
           .status(403)
           .json({ message: 'Authorization header is required', error: 403 }); // Send the custom error message with a 403 status code

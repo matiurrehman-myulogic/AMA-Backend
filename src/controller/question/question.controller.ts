@@ -87,5 +87,9 @@ closeCall(
   searchQueryUnanswered(@Param('query') query: string, @Req() req: any) {
     return this.questionService.searchQueryUnanswered(query,req.payload.id);
   }
+  @Get('getlocationDetails/:place_id')
+  findDetails(@Param('place_id') place_id: string) {
+    return this.questionService.findLocationDetails(place_id);
+  }
 
 }

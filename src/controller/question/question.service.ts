@@ -519,4 +519,19 @@ console.warn("wwwwww",filteredData)
     //   return filteredData;
     // }
   }
+
+  async findLocationDetails(place_id: string) {
+    const fields = 'name,formatted_address';
+    const detailsURL = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${place_id}&fields=${fields}&key=${this.config.get(
+      'GOOGLE_MAPS_API_KEY',
+    )}`;
+    try {
+      const response = await axios.get(detailsURL);
+      console.log(response.data.result);
+      return { ...response.data.result, place_id: place_id }; 
+      
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }
