@@ -205,6 +205,7 @@ const data = await this.ChatModel.aggregate([
 },
 ]);
 console.log("morrree data",data[0].messages)
+data[0].messages=data[0].messages.reverse()
 return data
 }
 
