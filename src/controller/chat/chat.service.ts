@@ -82,50 +82,11 @@ export class ChatService {
 
   //   return userDetail;
   // }
-  async findChatroom(id: string) {
+  async findChatroom(id: string,page:number,limit:number) {
           const roomId = new mongoose.Types.ObjectId(id);
 
-    // try {
+          const skip = (page - 1) * limit;
 
-
-
-
-
-    //   const objectId = new mongoose.Types.ObjectId(id);
-
-    //   const userDetail = await this.ChatModel.findOne({
-    //     roomId: objectId,
-    //   });
-
-    //   console.log(userDetail.questionerId);
-    //   console.log(userDetail.answererId);
-    //   const questionerId = new mongoose.Types.ObjectId(userDetail.questionerId);
-    //   const answererId = new mongoose.Types.ObjectId(userDetail.answererId);
-
-    //   const answererDetail = await this.AuthModel.findById(answererId);
-    //   const questionerDetail = await this.AuthModel.findById(questionerId);
-
-    //   const questionDetail = await this.QuestinModel.findOne({
-    //     _id: objectId,
-    //   });
-
-    //   if (!userDetail && !questionDetail) {
-    //     console.log('Both userDetail and questionDetail not found.');
-    //   }
-
-    //   console.log('userDetail', userDetail);
-    //   console.log('questionDetail', questionDetail);
-    //   const result = await this.ChatModel.aggregate(pipeline);
-    //   console.log('pipelin', result);
-    //   return {
-    //     userDetail,
-    //     question: questionDetail?.question,
-    //     answererDetail,
-    //     questionerDetail,
-    //   };
-    // } catch (error) {
-    //   console.error('Error in findChatroom:', error);
-    // }
     const data = await this.ChatModel.aggregate([
       {
         $match: {
@@ -166,19 +127,87 @@ export class ChatService {
           roomId: 1,
           questionerId: 1,
           answererId: 1,
-          messages: 1,
+          // messages: { $slice: ['$messages',-3] },
+          messages: {
+            $slice: [
+              {
+                $sortArray: {
+                  input: '$messages',
+                  sortBy: { createdAt: -1 }, // Sorting in descending order
+                },
+              },
+              (page - 1) * limit, // Skip
+              limit, // Limit
+            ],
+          },
           'question.status': 1,
           'question.pic': 1,
           'question.question': 1,
           questioner_unseenCount: 1,
           answerer_unseenCount: 1,
-          questioner_name: { $arrayElemAt: ['$questioner.FullName', 0] }, // Extract name for questioner
-          answerer_name: { $arrayElemAt: ['$answerer.FullName', 0] }, // Extract name for answerer
+          questioner_name: { $arrayElemAt: ['$questioner.FullName', 0] },
+          answerer_name: { $arrayElemAt: ['$answerer.FullName', 0] },
         },
       },
+    
+    
+    
     ]);
+console.log("initialll data",data[0].messages)
     return data
   }
+
+
+  async findMoreChat(id: string,page:number,limit:number) {
+    const roomId = new mongoose.Types.ObjectId(id);
+
+    const skip = (page - 1) * limit;
+
+const data = await this.ChatModel.aggregate([
+{
+  $match: {
+   roomId:roomId
+  },
+},
+
+{
+  $project: {
+    _id: 1,
+    roomId: 1,
+    messages: {
+      $slice: [
+        {
+          $sortArray: {
+            input: '$messages',
+            sortBy: { createdAt: -1 }, // Sorting in descending order
+          },
+        },
+        (page - 1) * limit, // Skip
+        limit, // Limit
+      ],
+    },
+  },
+},
+{
+  $unwind: '$messages', // Unwind the messages array
+},
+{
+  $sort: {
+    'messages.createdAt': 1, // Sort messages in ascending order
+  },
+},
+{
+  $group: {
+    _id: '$_id',
+    roomId: { $first: '$roomId' },
+    messages: { $push: '$messages' }, // Group the messages back into an array
+  },
+},
+]);
+console.log("morrree data",data[0].messages)
+return data
+}
+
   findOne(id: number) {
     return `This action returns a #${id} chat`;
   }
@@ -187,32 +216,10 @@ export class ChatService {
     const objectId = new mongoose.Types.ObjectId(roomId);
     const user = new mongoose.Types.ObjectId(userId);
     let updatedDocument: ChatDocument | null;
-
     const Chatroom = await this.ChatModel.findOne({
       roomId: objectId,
     });
 
-
-
-    //  if (userId ===Chatroom.questionerId) {
-    //    updatedDocument = await this.ChatModel.findOneAndUpdate(
-    //     { roomId: objectId },
-    //     {
-    //       $push: { messages: { ...updateChatDto, createdAt: Date.now() } },
-    //       $inc: { answerer_unseenCount: 1 }, 
-    //     },
-    //     { new: true },
-    //   );
-    // } else {
-    //    updatedDocument = await this.ChatModel.findOneAndUpdate(
-    //     { roomId: objectId },
-    //     {
-    //       $push: { messages: { ...updateChatDto, createdAt: Date.now() } },
-    //       $inc: {questioner_unseenCount : 1 }, 
-    //     },
-    //     { new: true },
-    //   );
-    // }
     console.log(user, Chatroom.questionerId)
     const countField = user.toString() === Chatroom.questionerId.toString() ? "answerer_unseenCount" : "questioner_unseenCount";
     const incrementValue = updateChatDto.Online ? 0 : 1;
@@ -225,7 +232,7 @@ console.log("finallllllll",updateChatDtoWithoutOnline)
     updatedDocument = await this.ChatModel.findOneAndUpdate(
       { roomId: objectId },
       {
-        $push: { messages: { ...updateChatDtoWithoutOnline, createdAt: Date.now() } },
+        $push: { messages: { ...updateChatDtoWithoutOnline, createdAt: new Date() } },
         $inc: { [countField]: incrementValue },
       },
       { new: true },

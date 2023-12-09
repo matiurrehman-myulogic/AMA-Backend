@@ -16,6 +16,8 @@ import { User_Status } from 'src/constants';
 import { FirebaseApp } from 'src/database/firebase-app';
 import { addReponseDTO } from 'src/DTO/addResponse.dto';
 import { ChatSchema } from './../../schema/chat.schema';
+import { Transaction, TransactionDocument } from 'src/schema/transaction.schema';
+import { Transaction_Status } from 'src/constants/TransactionStatus';
 @Injectable()
 export class QuestionService {
   constructor(
@@ -24,6 +26,8 @@ export class QuestionService {
     private QuestionModel: mongoose.Model<QuentionDocument>,
     @InjectModel(Auth.name)
     private UserModel: mongoose.Model<AuthDocument>,
+    @InjectModel(Transaction.name)
+    private TransactionModel: mongoose.Model<TransactionDocument>,
   ) {}
 
   async create({ userId, data }): Promise<Question> {
@@ -38,18 +42,35 @@ export class QuestionService {
     //   throw new Error('Failed to retrieve location data.');
     // }
     console.log('question asked', data);
+    const res = await this.QuestionModel.create({ ...data, userId, likes: 0 });
 
     const updatedUser = await this.UserModel.findOneAndUpdate(
       { _id: userId },
       { $inc: { Points: -2 } }, // Use $inc to decrement the Points field by 2
       { new: true }, // To return the updated document
     );
+    // const deductionTransaction = new this.transactionModel({
+    //   userId: userId,
+    //   date: new Date(), // Current date and time
+    //   type: 'deduction',
+    //   amount: deductionAmount,
+    //   description: 'Points deducted for creating a question'
+    // });
 
-    const res = await this.QuestionModel.create({ ...data, userId, likes: 0 });
+    const statusUpdate = await this.TransactionModel.findOneAndUpdate(
+      { userId: userId },
+      {
+        $push: { Transactions: { questionId:res._id,Date: new Date(),status:Transaction_Status.DEDUCTION,amount:2, description: 'Points deducted for creating a question'} },
+      },
+      { new: true },
+    );
+   
+   
     return res;
   }
 
   async findAll() {
+    
     try {
       const user = await this.QuestionModel.find();
       console.log('ghghghghg', user);
@@ -192,6 +213,14 @@ export class QuestionService {
       },
       { new: true },
     );
+
+    const statusUpdate = await this.TransactionModel.findOneAndUpdate(
+      { userId:  question.answererId },
+      {
+        $push: { Transactions: {  questionId:question._id,Date: new Date(),status:Transaction_Status.EARNED,amount:1, description: 'Points earned for answering a question'} },
+      },
+      { new: true },
+    );
   }
   async AddResponse(id: string, addReponseDTO: addReponseDTO) {
     const objectId = new mongoose.Types.ObjectId(id);
@@ -207,9 +236,14 @@ export class QuestionService {
       question.answererId,
       {
         $inc: { Points: 1 },
-      },
-      { new: true },
-    );
+      }
+          );
+    const statusUpdate = await this.TransactionModel.findOneAndUpdate(
+      { userId:  question.answererId },
+      {
+        $push: { Transactions: {  questionId:question._id,Date: new Date(),status:Transaction_Status.EARNED,amount:1, description: 'Points earned for adding a response'} },
+      }
+      );
   }
   async findInProgressChat(id: string) {
     const objectId = new mongoose.Types.ObjectId(id);
@@ -274,7 +308,6 @@ console.log("page and limit",page,limit)
       throw error;
     }
   }
-
   async searchQuery(query: string) {
     // const data = await this.QuestionModel.aggregate([
     //   {
@@ -291,31 +324,66 @@ console.log("page and limit",page,limit)
     // ]);
     // return data
 
+    // const data = await this.QuestionModel.aggregate([
+    //   {
+    //     $search: {
+    //       index: 'searchQuestions',
+    //       text: {
+    //         query,
+    //         path: {
+    //           wildcard: '*',
+    //         },
+    //       },
+    //     },
+    //   },
+    //   {
+    //     $match: {
+    //       $and: [
+    //         {
+    //           $or: [
+    //             { question: { $exists: true, $regex: query, $options: 'i' } }, // Match query in 'question' field
+    //             { answer: { $exists: true, $regex: query, $options: 'i' } },   // Match query in 'answer' field
+    //           ],
+    //         },
+    //         { status: 'CLOSE' }, // Additional match conditions, if needed
+    //       ],
+    //     },
+    //   },
+    //   {
+    //     $sort: {
+    //       createdAt: -1,
+    //     },
+    //   },
+    // ]);
     const data = await this.QuestionModel.aggregate([
       {
         $search: {
           index: 'searchQuestions',
           text: {
-            query,
-            path: {
-              wildcard: '*',
-            },
-          },
-        },
+            query: query,
+            path: ['question', 'answer'] // Search specifically in 'question' and 'answer'
+          }
+        }
       },
       {
         $match: {
-          answer: { $exists: true },
-          status: 'CLOSE',
-        },
+          $and: [
+            {
+              $or: [
+                { question: { $regex: query, $options: 'i' } }, // Substring match in 'question'
+                { answer: { $regex: query, $options: 'i' } }   // Substring match in 'answer'
+              ],
+            },
+            { status: 'CLOSE' } // Additional filtering conditions
+          ]
+        }
       },
       {
         $sort: {
-          createdAt: -1,
-        },
-      },
+          createdAt: -1
+        }
+      }
     ]);
-
     try {
       if (data) {
         const filteredData = await Promise.all(
@@ -441,7 +509,6 @@ console.log("page and limit",page,limit)
           };
         }),
       );
-console.warn("wwwwww",filteredData)
       return filteredData;
     }
     // const data = await this.QuestionModel.aggregate([
@@ -521,10 +588,11 @@ console.warn("wwwwww",filteredData)
   }
 
   async findLocationDetails(place_id: string) {
-    const fields = 'name,formatted_address';
+    const fields = 'name,formatted_address,geometry';
     const detailsURL = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${place_id}&fields=${fields}&key=${this.config.get(
       'GOOGLE_MAPS_API_KEY',
     )}`;
+    console.log("detailsusl",detailsURL)
     try {
       const response = await axios.get(detailsURL);
       console.log(response.data.result);

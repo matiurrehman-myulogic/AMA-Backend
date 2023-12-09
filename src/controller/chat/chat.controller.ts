@@ -7,7 +7,8 @@ import {
   Param,
   Delete,
   UseGuards,
-  Req
+  Req,
+  Query
 } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import * as mongoose from 'mongoose';
@@ -38,8 +39,14 @@ export class ChatController {
   // findChatroom(@Body() id:FindChatDto) {
   //   return this.chatService.findChatroom(id);
   // }
-  findChatroom(@Param('id') id: string) {
-    return this.chatService.findChatroom(id);
+  findChatroom(@Param('id') id: string, @Query('page') page: number = 1,@Query('limit') limit: number = 10) {
+    return this.chatService.findChatroom(id,page,limit);
+  }
+
+  @Get('getMoreChat/:id')
+
+  findMoreChat(@Param('id') id: string, @Query('page') page: number = 2,@Query('limit') limit: number = 10) {
+    return this.chatService.findMoreChat(id,page,limit);
   }
 
   @UseGuards(AuthGuard)
@@ -50,7 +57,7 @@ export class ChatController {
     @Param('id') id: string,
     @Body() updateChatDto: UpdateChatDto,
   ) {
-    return this.chatService.updateChatMessage(req.payload.id,updateChatDto, id);
+    return this.chatService.updateChatMessage(req.payload.id,updateChatDto,id);
   }
 
   @Get('getInprogressChat/:id')

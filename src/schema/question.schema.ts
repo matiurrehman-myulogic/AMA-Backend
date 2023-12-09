@@ -43,12 +43,12 @@ export class Question {
     type: {
       type: String,
       enum: ['Point'], 
-      required: true,
+      // required: true,
   
     },
     coordinates: {
       type: [Number], // Specify coordinates as [longitude, latitude]
-      required: true,
+      // required: true,
     },
   })
   location: {

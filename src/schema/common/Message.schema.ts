@@ -24,7 +24,7 @@ export class Message{
 
      @Prop()
      imgageURL: string;
-     @Prop({ required: true, default: Date.now() })
+     @Prop()
      createdAt: Date;
   
      @Prop({
